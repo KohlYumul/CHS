@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}User Directory - MedCentral{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Table Responsive Core Frame Wrapper */
+    .table-container-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+    .custom-table {
+        margin-bottom: 0;
+    }
+    .custom-table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .custom-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    .custom-table tbody tr:hover {
+        background-color: #fafdff;
+    }
+    .custom-table tbody td {
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+        color: #333333;
+        font-size: 0.95rem;
+    }
+    .action-link {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.25rem 0.6rem;
+        border-radius: 50px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Top Navigation breadcrumbs or dynamic back links -->
+    <div class="mb-4">
+        {% if hospital %}
+            <a href="{% url 'hospitals:hospital_overview' hospital.id %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Return to Facility Overview
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Back to Administrative Dashboard
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Page Header Executive Summary Panel -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-users-gear fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Access Control List</span>
+                <h1 class="h2 mb-0 fw-bold">
+                    Users Directory
+                    {% if hospital %}<span class="text-secondary fw-normal fs-4">&ndash; {{ hospital.name }}</span>{% endif %}
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Directory Table Card -->
+    {% if users %}
+        <div class="card shadow-sm table-container-card overflow-hidden">
+            <div class="table-responsive">
+                <table class="table custom-table align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">User Identity</th>
+                            <th style="width: 15%;">Role</th>
+                            <th style="width: 15%;">Account Status</th>
+                            <th style="width: 25%;">Facility Affiliation</th>
+                            <th style="width: 12%;">Date Onboarded</th>
+                            <th style="width: 8%; text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <!-- User Primary Identity Stack -->
+                                <td>
+                                    <div>
+                                        <span class="fw-bold text-dark d-block mb-0.5">
+                                            {{ user.first_name }} {{ user.last_name }}
+                                        </span>
+                                        <span class="text-muted small d-block">
+                                            <i class="fa-regular fa-envelope me-1 small"></i>{{ user.email }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <!-- Role Designation -->
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 fw-semibold small">
+                                        {{ user.role }}
+                                    </span>
+                                </td>
+
+                                <!-- Operational Status Indicator Badge -->
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="status-indicator bg-success bg-opacity-10 text-success">
+                                            <span class="bg-success rounded-circle" style="width: 6px; height: 6px;"></span>
+                                            Active
+                                        </span>
+                                    {% else %}
+                                        <span class="status-indicator bg-danger bg-opacity-10 text-danger">
+                                            <span class="bg-danger rounded-circle" style="width: 6px; height: 6px;"></span>
+                                            Inactive
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Linked Medical Facility -->
+                                <td>
+                                    {% if user.hospital %}
+                                        <span class="text-dark-emphasis fw-medium small d-flex align-items-center gap-1.5">
+                                            <i class="fa-solid fa-hospital text-muted opacity-75 small"></i>
+                                            {{ user.hospital }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted small italic">System Administration</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- Date Joined -->
+                                <td>
+                                    <span class="text-secondary small">
+                                        {{ user.date_joined|date:"M d, Y" }}
+                                    </span>
+                                </td>
+
+                                <!-- Inline Action Controls -->
+                                <td style="text-align: right;">
+                                    <a href="{% url 'accounts:profile_edit' user.pk %}" class="action-link text-primary d-inline-flex align-items-center gap-1" title="Modify Profiles">
+                                        <i class="fa-solid fa-user-pen small"></i>
+                                        <span>Edit</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <!-- Fallback Empty State Frame Box -->
+        <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white">
+            <div class="card-body">
+                <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-user-slash fs-3"></i>
+                </div>
+                <h4 class="h5 fw-bold text-secondary mb-1">No Users Logged</h4>
+                <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                    {% if hospital %}
+                        There are currently no active users assigned to this facility.
+                    {% else %}
+                        There are currently no registered users logged inside the system directory.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

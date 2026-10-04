@@ -1,0 +1,346 @@
+/* =========================
+   General Reset & Typography
+   ========================= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e6f0fa; /* light calming blue */
+    margin: 0;
+    padding: 0;
+    color: #111827;
+}
+
+main {
+    padding: 20px;
+}
+
+h1, h2, h3, h4 {
+    margin: 0 0 15px;
+    font-weight: 600;
+}
+
+.text-muted {
+    color: #4b5563;
+}
+
+.note {
+    color: #0c4a6e; /* darker blue note for alerts */
+    font-size: 14px;
+}
+
+/* =========================
+   Page Header
+   ========================= */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #f0f7ff; /* soft header background */
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* =========================
+   Buttons
+   ========================= */
+.btn {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.2s;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.btn-primary {
+    background: #2563eb; /* clean blue */
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: #fff;
+}
+
+.btn-danger {
+    background: #ef4444; /* softer red */
+    color: #fff;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+/* =========================
+   Tables
+   ========================= */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    font-size: 14px;
+}
+
+.styled-table th {
+    background: #dbeafe; /* light hospital blue */
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+.styled-table tr:hover {
+    background: #f9fafb;
+}
+
+/* =========================
+   Badges
+   ========================= */
+.badge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.badge.role {
+    background: #e0f2fe;   /* light hospital blue */
+    color: #0369a1;
+    font-weight: 600;
+    border: 1px solid #93c5fd;
+}
+
+.badge.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge.danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* =========================
+   Cards
+   ========================= */
+.card, .form-card, .link-card, .hospital-card {
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.card, .form-card {
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.link-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 20px;
+    transition: all 0.2s ease-in-out;
+}
+
+.link-card:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+.hospital-card {
+    position: relative;
+    padding: 16px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s ease-in-out;
+    height: auto; /* independent sizes */
+    min-height: 150px;
+}
+
+.hospital-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.hospital-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* =========================
+   Dashboard Grid
+   ========================= */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    align-items: start; /* 👈 prevents cards from stretching equally */
+}
+
+.dashboard-grid a {
+    height: 100%;
+}
+
+/* =========================
+   Confirmation Box
+   ========================= */
+.confirm-box {
+    background: #dbeafe; /* light blue alert box */
+    border: 1px solid #93c5fd;
+    color: #1e40af;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   Forms
+   ========================= */
+.form-container {
+    max-width: 420px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1e3a8a;
+}
+
+.form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #1e40af;
+    text-align: center;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    max-width: 280px;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    background: #f9fafb;
+}
+
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-actions .btn {
+    width: 100%;
+}
+
+.no-data {
+    color: #4b5563;
+    font-style: italic;
+}
+
+/* =========================
+   Hospital Feel Enhancements
+   ========================= */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
+    z-index: -1;
+}
+
+/* =========================
+   Recent Users under Hospitals
+   ========================= */
+.recent-users {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 10px;
+    margin-top: 8px;
+}
+
+.recent-users h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #0c4a6e;
+}
+
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-list li {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.user-link {
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.user-link:hover {
+    text-decoration: underline;
+    background: #f0f7ff;
+    color: #2563eb;
+}
+
+.toggle-users {
+    align-self: flex-start;
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: #6b7280;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.toggle-users:hover {
+    opacity: 0.85;
+}

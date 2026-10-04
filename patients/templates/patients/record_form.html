@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Medical Record{% else %}Add Medical Record{% endif %} - MedCentral
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Form Card Wrapper Layout */
+    .form-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+
+    /* Target Django's raw form inputs globally for design consistency */
+    .form-card input[type="text"],
+    .form-card select,
+    .form-card textarea {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    .form-card input[type="text"]:focus,
+    .form-card select:focus,
+    .form-card textarea:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+    }
+
+    /* Modern clean file upload control styling override */
+    .form-card input[type="file"] {
+        display: block;
+        width: 100%;
+        font-size: 0.95rem;
+        color: #495057;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+    }
+    .form-card input[type="file"]::file-selector-button {
+        padding: 0.375rem 0.75rem;
+        margin: -0.5rem -0.75rem;
+        margin-inline-end: 0.75rem;
+        color: #495057;
+        background-color: #f8f9fa;
+        border: 0 solid inherit;
+        border-right: 1px solid #ced4da;
+        border-radius: 0;
+        transition: color .15s ease-in-out,background-color .15s ease-in-out;
+    }
+    .form-card input[type="file"]::file-selector-button:hover {
+        background-color: #e9ecef;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-10 col-lg-8">
+
+        <!-- Breadcrumb Return Link Navigation -->
+        <div class="mb-3">
+            <a href="{% url 'patients:record_list' %}{% if hospital_id %}?hospital_id={{ hospital_id }}{% endif %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Back to Clinical Records
+            </a>
+        </div>
+
+        <!-- Main Form Entry Card Wrapper -->
+        <div class="card shadow-sm form-card overflow-hidden">
+            <!-- Top brand primary color accent line -->
+            <div class="bg-primary" style="height: 4px;"></div>
+
+            <div class="card-body p-4 p-md-5">
+                <!-- Dynamic Header Block Title -->
+                <div class="mb-4 border-bottom pb-3">
+                    <h2 class="h4 fw-bold text-dark mb-1">
+                        {% if form.instance.pk %}Edit Medical Record{% else %}Add Medical Record{% endif %}
+                    </h2>
+                    <p class="text-muted small mb-0">
+                        {% if form.instance.pk %}Modify diagnostic files, attachments, and data parameters for this patient file node.{% else %}Register a new clinical document asset or diagnostic report file into the patient history.{% endif %}
+                    </p>
+                </div>
+
+                <!-- Core Form Configuration Block -->
+                <form method="post" enctype="multipart/form-data" autocomplete="off">
+                    {% csrf_token %}
+
+                    <!-- Global Validation Feedback Alert -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
+                            <i class="fa-solid fa-circle-exclamation fs-5 me-2 flex-shrink-0"></i>
+                            <div>Please correct the chart parameter restrictions flagged inside the form below.</div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Patient Assignment Field -->
+                    <div class="mb-4">
+                        <label for="{{ form.patient.id_for_label }}" class="form-label form-label-custom">
+                            {{ form.patient.label }}
+                        </label>
+                        {{ form.patient }}
+                        {% for error in form.patient.errors %}
+                            <div class="text-danger small mt-1 fw-medium"><i class="fa-solid fa-triangle-exclamation me-1 small"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Clinical Description Field -->
+                    <div class="mb-4">
+                        <label for="{{ form.description.id_for_label }}" class="form-label form-label-custom">
+                            {{ form.description.label }}
+                        </label>
+                        {{ form.description }}
+                        {% for error in form.description.errors %}
+                            <div class="text-danger small mt-1 fw-medium"><i class="fa-solid fa-triangle-exclamation me-1 small"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- File Object Attachment Field -->
+                    <div class="mb-4">
+                        <label for="{{ form.file.id_for_label }}" class="form-label form-label-custom">
+                            {{ form.file.label }}
+                        </label>
+                        <div class="p-2 border rounded bg-light bg-opacity-50">
+                            {{ form.file }}
+                        </div>
+                        {% for error in form.file.errors %}
+                            <div class="text-danger small mt-1 fw-medium"><i class="fa-solid fa-triangle-exclamation me-1 small"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Form Execution Actions Controller Footer Block -->
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end align-items-center border-top pt-4 mt-5">
+                        <!-- Navigation Cancel Dismiss Action Button -->
+                        <a href="{% url 'patients:record_list' %}{% if hospital_id %}?hospital_id={{ hospital_id }}{% endif %}" class="btn btn-light border px-4 py-2 w-100 w-sm-auto order-2 order-sm-1 text-secondary fw-medium">
+                            Cancel
+                        </a>
+
+                        <!-- Core Record Commit Registration Execution Button -->
+                        <button type="submit" class="btn btn-primary px-5 py-2 w-100 w-sm-auto order-1 order-sm-2 fw-medium d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up small"></i>
+                            <span>Save Medical Record</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

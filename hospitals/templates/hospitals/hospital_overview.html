@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}{{ hospital.name }} - Overview{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Metric Card Enhancements */
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #ffffff;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05) !important;
+    }
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Layout Scannability Elements */
+    .table-responsive-wrapper {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .quick-link-btn {
+        transition: all 0.2s ease;
+        font-weight: 500;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Top Navigation Breadcrumbs & Back Link -->
+    <div class="mb-4">
+        <a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to Administrative Dashboard
+        </a>
+    </div>
+
+    <!-- Page Header Executive Summary Panel -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-chart-line fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Executive Analytics</span>
+                <h1 class="h2 mb-0 fw-bold">{{ hospital.name }}</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Operational Stats Cards Metrics Grid (Uniform widths) -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-4 mb-5">
+        <!-- Staff Metrics -->
+        <div class="col">
+            <div class="card h-100 shadow-sm stat-card p-4 text-center">
+                <div class="mx-auto stat-icon bg-primary bg-opacity-10 text-primary">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+                <h3 class="h6 text-muted uppercase tracking-wider small fw-bold mb-1">Staff Roster</h3>
+                <span class="h2 fw-bold text-dark mb-0">{{ staff_count }}</span>
+            </div>
+        </div>
+
+        <!-- Patient Metrics -->
+        <div class="col">
+            <div class="card h-100 shadow-sm stat-card p-4 text-center">
+                <div class="mx-auto stat-icon bg-success bg-opacity-10 text-success">
+                    <i class="fa-solid fa-hospital-user"></i>
+                </div>
+                <h3 class="h6 text-muted uppercase tracking-wider small fw-bold mb-1">Total Patients</h3>
+                <span class="h2 fw-bold text-dark mb-0">{{ patient_count }}</span>
+            </div>
+        </div>
+
+        <!-- Equipment Metrics -->
+        <div class="col">
+            <div class="card h-100 shadow-sm stat-card p-4 text-center">
+                <div class="mx-auto stat-icon bg-info bg-opacity-10 text-info">
+                    <i class="fa-solid fa-microscope"></i>
+                </div>
+                <h3 class="h6 text-muted uppercase tracking-wider small fw-bold mb-1">Active Equipment</h3>
+                <span class="h2 fw-bold text-dark mb-0">{{ equipment_count }}</span>
+            </div>
+        </div>
+
+        <!-- Supplies Metrics -->
+        <div class="col">
+            <div class="card h-100 shadow-sm stat-card p-4 text-center">
+                <div class="mx-auto stat-icon bg-warning bg-opacity-10 text-warning" style="color: #bc8f00 !important; background-color: rgba(255, 193, 7, 0.1) !important;">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <h3 class="h6 text-muted uppercase tracking-wider small fw-bold mb-1">General Supplies</h3>
+                <span class="h2 fw-bold text-dark mb-0">{{ supply_count }}</span>
+            </div>
+        </div>
+
+        <!-- Medication Metrics -->
+        <div class="col">
+            <div class="card h-100 shadow-sm stat-card p-4 text-center">
+                <div class="mx-auto stat-icon bg-danger bg-opacity-10 text-danger">
+                    <i class="fa-solid fa-pills"></i>
+                </div>
+                <h3 class="h6 text-muted uppercase tracking-wider small fw-bold mb-1">Medications</h3>
+                <span class="h2 fw-bold text-dark mb-0">{{ medication_count }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Layout Grid Split -->
+    <div class="row g-4">
+        <!-- Left Side Panel: Latest Patients Table Profile Registry -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-muted opacity-75"></i>
+                    <strong class="text-dark">Recently Admitted Patients</strong>
+                </div>
+                <div class="card-body p-0">
+                    {% if latest_patients %}
+                        <div class="table-responsive-wrapper">
+                            <table class="table align-middle mb-0 text-nowrap">
+                                <thead class="table-light text-uppercase tracking-wider small" style="font-size: 0.75rem;">
+                                    <tr>
+                                        <th class="ps-4">Patient Name</th>
+                                        <th>Email Address</th>
+                                        <th class="pe-4 text-end">Date Onboarded</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for patient in latest_patients %}
+                                        <tr>
+                                            <td class="ps-4 fw-semibold text-dark">
+                                                {{ patient.first_name }} {{ patient.last_name }}
+                                            </td>
+                                            <td class="text-secondary">{{ patient.email }}</td>
+                                            <td class="pe-4 text-end text-muted small">
+                                                {{ patient.date_joined|date:"M d, Y" }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fa-solid fa-users-slash text-muted opacity-50 fs-2 mb-2"></i>
+                            <p class="text-muted small mb-0">No active patient files linked with this facility profile record.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Panel: System Control Center Action Framework Quick Links -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-sliders text-muted opacity-75"></i>
+                    <strong class="text-dark">System Administration Hub</strong>
+                </div>
+                <div class="card-body d-flex flex-column gap-2 p-3">
+                    <a href="{% url 'accounts:user_list' %}?hospital_id={{ hospital.id }}"
+                       class="btn btn-light border text-start py-2.5 px-3 quick-link-btn d-flex align-items-center justify-content-between text-dark">
+                        <span><i class="fa-solid fa-users text-secondary me-2"></i> View System Users</span>
+                        <i class="fa-solid fa-chevron-right text-muted opacity-50 small"></i>
+                    </a>
+                    <a href="{% url 'patients:patient_list' %}?hospital_id={{ hospital.id }}"
+                       class="btn btn-outline-success text-start py-2.5 px-3 quick-link-btn d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-address-card me-2"></i> Manage Patient Profiles</span>
+                        <i class="fa-solid fa-chevron-right opacity-50 small"></i>
+                    </a>
+                    <a href="{% url 'inventory:equipment_list' %}?hospital_id={{ hospital.id }}"
+                       class="btn btn-outline-primary text-start py-2.5 px-3 quick-link-btn d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-screwdriver-wrench me-2"></i> Monitor Clinical Equipment</span>
+                        <i class="fa-solid fa-chevron-right opacity-50 small"></i>
+                    </a>
+                    <a href="{% url 'inventory:supply_list' %}?hospital_id={{ hospital.id }}"
+                       class="btn btn-outline-warning text-start py-2.5 px-3 quick-link-btn d-flex align-items-center justify-content-between text-dark-emphasis">
+                        <span><i class="fa-solid fa-boxes-stacked me-2"></i> Track Inventory Supplies</span>
+                        <i class="fa-solid fa-chevron-right opacity-50 small"></i>
+                    </a>
+                    <a href="{% url 'inventory:medication_list' %}?hospital_id={{ hospital.id }}"
+                       class="btn btn-outline-danger text-start py-2.5 px-3 quick-link-btn d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-prescription-bottle-medical me-2"></i> Audit Pharmacy Stock</span>
+                        <i class="fa-solid fa-chevron-right opacity-50 small"></i>
+                    </a>
+                    <a href="{% url 'reports:report_list' %}?hospital_id={{ hospital.id }}"
+                       class="btn btn-outline-secondary text-start py-2.5 px-3 quick-link-btn d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-file-invoice-dollar me-2"></i> Extract Executive Reports</span>
+                        <i class="fa-solid fa-chevron-right opacity-50 small"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

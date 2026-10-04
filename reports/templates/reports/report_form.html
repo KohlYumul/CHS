@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit Report{% else %}Add New Report{% endif %} - MedCentral{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Professional Form Card Custom Styling */
+    .form-card {
+        border: none;
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+    /* Style default Django form inputs to match Bootstrap cleanly */
+    .form-card input[type="text"],
+    .form-card textarea {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+    .form-card input[type="text"]:focus,
+    .form-card textarea:focus {
+        color: #212529;
+        background-color: #fff;
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+    }
+    .form-card input[type="file"] {
+        padding: 0.375rem 0.75rem;
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        border: 1px dashed #ced4da;
+        width: 100%;
+    }
+    .form-label-custom {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-10 col-lg-8">
+
+        <!-- Back Navigation Breadcrumb Link -->
+        <div class="mb-3">
+            {% if user.role == "Staff" %}
+                <a href="{% url 'reports:report_list' %}" class="text-decoration-none text-muted small fw-medium">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Reports
+                </a>
+            {% elif user.role == "Admin" and hospital %}
+                <a href="{% url 'reports:report_list' %}?hospital_id={{ hospital.id }}" class="text-decoration-none text-muted small fw-medium">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Reports
+                </a>
+            {% else %}
+                <a href="{% url 'reports:report_list' %}" class="text-decoration-none text-muted small fw-medium">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Reports
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Main Form Card Container -->
+        <div class="card shadow-sm form-card overflow-hidden">
+            <!-- Top brand colored strip -->
+            <div class="bg-primary" style="height: 4px;"></div>
+
+            <div class="card-body p-4 p-md-5">
+                <!-- Page Title Header -->
+                <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2">
+                        {% if form.instance.pk %}
+                            <i class="fa-solid fa-file-pen fs-4"></i>
+                        {% else %}
+                            <i class="fa-solid fa-file-circle-plus fs-4"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-0">
+                            {% if form.instance.pk %}Edit Clinical Report{% else %}Create New Report{% endif %}
+                        </h2>
+                        <p class="text-muted small mb-0">Please fill out the details below securely archived into records.</p>
+                    </div>
+                </div>
+
+                <!-- Form Element -->
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Display Form Errors globally if any -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center" role="alert">
+                            <i class="fa-solid fa-circle-exclamation fs-5 me-2"></i>
+                            <div>Please correct the errors flagged below.</div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Report Title Input Group -->
+                    <div class="mb-4">
+                        <label for="{{ form.title.id_for_label }}" class="form-label form-label-custom">
+                            <i class="fa-solid fa-heading text-secondary me-1 small"></i> Document Title
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small mt-1">{{ form.title.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description Input Group -->
+                    <div class="mb-4">
+                        <label for="{{ form.description.id_for_label }}" class="form-label form-label-custom">
+                            <i class="fa-solid fa-align-left text-secondary me-1 small"></i> Details & Summary Description
+                        </label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small mt-1">{{ form.description.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- File Attachment Upload Group -->
+                    <div class="mb-5">
+                        <label for="{{ form.file.id_for_label }}" class="form-label form-label-custom">
+                            <i class="fa-solid fa-paperclip text-secondary me-1 small"></i> Attach Document File
+                        </label>
+                        <div class="position-relative">
+                            {{ form.file }}
+                        </div>
+                        <div class="form-text text-muted small mt-1">Accepted formats: Secure PDFs, images, or compressed medical telemetry archives.</div>
+                        {% if form.file.errors %}
+                            <div class="text-danger small mt-1">{{ form.file.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Interactive Form Submissions Area Footer -->
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end align-items-center border-top pt-4">
+                        <!-- Dismiss / Cancel Route Link Button -->
+                        {% if user.role == "Staff" %}
+                            <a href="{% url 'reports:report_list' %}" class="btn btn-light border px-4 py-2 w-100 w-sm-auto order-2 order-sm-1 text-secondary fw-medium">Cancel</a>
+                        {% elif user.role == "Admin" and hospital %}
+                            <a href="{% url 'reports:report_list' %}?hospital_id={{ hospital.id }}" class="btn btn-light border px-4 py-2 w-100 w-sm-auto order-2 order-sm-1 text-secondary fw-medium">Cancel</a>
+                        {% else %}
+                            <a href="{% url 'reports:report_list' %}" class="btn btn-light border px-4 py-2 w-100 w-sm-auto order-2 order-sm-1 text-secondary fw-medium">Cancel</a>
+                        {% endif %}
+
+                        <!-- Core Execution Submit Button -->
+                        <button type="submit" class="btn btn-primary px-5 py-2 w-100 w-sm-auto order-1 order-sm-2 fw-medium d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-circle-check small"></i>
+                            <span>Save Report</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

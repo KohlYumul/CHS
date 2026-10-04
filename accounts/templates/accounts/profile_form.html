@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if edit_user %}Edit Profile: {{ edit_user.first_name }} {{ edit_user.last_name }}{% else %}Edit My Profile{% endif %} - MedCentral
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Profile Form Card Styling */
+    .form-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+
+    /* Target form input elements for crisp layout parameters */
+    .form-card input[type="text"],
+    .form-card input[type="email"],
+    .form-card input[type="password"],
+    .form-card select,
+    .form-card textarea {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    .form-card input[type="text"]:focus,
+    .form-card input[type="email"]:focus,
+    .form-card input[type="password"]:focus,
+    .form-card select:focus,
+    .form-card textarea:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-10 col-lg-8">
+
+        <!-- Breadcrumb Context Back Link Navigation -->
+        <div class="mb-3">
+            {% if edit_user and edit_user.hospital %}
+                <a href="{% url 'accounts:user_list' %}?hospital_id={{ edit_user.hospital.id }}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Users Directory
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Main Form Entry Frame Box Container -->
+        <div class="card shadow-sm form-card overflow-hidden">
+            <!-- Top brand dynamic role accent boundary strip -->
+            <div class="bg-primary" style="height: 4px;"></div>
+
+            <div class="card-body p-4 p-md-5">
+                <!-- Page Context Title Header -->
+                <div class="mb-4 border-bottom pb-3">
+                    <h2 class="h4 fw-bold text-dark mb-1">
+                        {% if edit_user %}
+                            Edit Profile &ndash; {{ edit_user.first_name }} {{ edit_user.last_name }}
+                        {% else %}
+                            Edit My Profile
+                        {% endif %}
+                    </h2>
+                    <p class="text-muted small mb-0">
+                        {% if edit_user %}
+                            Modify system configurations for account designation: <span class="badge bg-light text-primary border fw-semibold">{{ edit_user.role }}</span>
+                        {% else %}
+                            Update your personal account credentials and profile attributes.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Core Form Element -->
+                <form method="post" autocomplete="off">
+                    {% csrf_token %}
+
+                    <!-- Global Form Errors Alert Block -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
+                            <i class="fa-solid fa-circle-exclamation fs-5 me-2 flex-shrink-0"></i>
+                            <div>Please correct the highlighted data errors below before saving profile modifications.</div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Dynamic Form Field Generator Loop -->
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label form-label-custom">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <div class="form-text text-muted small mt-1">{{ field.help_text|safe }}</div>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="text-danger small mt-1 fw-medium">
+                                    <i class="fa-solid fa-triangle-exclamation me-1 small"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <!-- Action Control Panel Footer Interface Area -->
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end align-items-center border-top pt-4 mt-5">
+                        <!-- Navigation Cancel Dismiss Action Button -->
+                        {% if edit_user and edit_user.hospital %}
+                            <a href="{% url 'accounts:user_list' %}?hospital_id={{ edit_user.hospital.id }}" class="btn btn-light border px-4 py-2 w-100 w-sm-auto order-2 order-sm-1 text-secondary fw-medium">
+                                Cancel
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:admin_dashboard' %}" class="btn btn-light border px-4 py-2 w-100 w-sm-auto order-2 order-sm-1 text-secondary fw-medium">
+                                Cancel
+                            </a>
+                        {% endif %}
+
+                        <!-- Core Settings Record Update Execution Button -->
+                        <button type="submit" class="btn btn-primary px-5 py-2 w-100 w-sm-auto order-1 order-sm-2 fw-medium d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-floppy-disk small"></i>
+                            <span>Save Changes</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

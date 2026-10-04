@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Profile - {{ patient.user.first_name }} {{ patient.user.last_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Data Grid Framework Cards */
+    .profile-section-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+    .section-headline {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #495057;
+        border-bottom: 2px solid #f1f3f5;
+        padding-bottom: 0.5rem;
+    }
+    .metric-item {
+        margin-bottom: 1.25rem;
+    }
+    .metric-item:last-child {
+        margin-bottom: 0;
+    }
+    .metric-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.25px;
+        margin-bottom: 0.2rem;
+    }
+    .metric-data {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #212529;
+    }
+    .allergy-alert-box {
+        background-color: #fffdf6;
+        border-left: 4px solid #ffc107;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Top Navigation Context Backlinks -->
+    <div class="mb-4">
+        {% if hospital %}
+            {% if user.role == "Admin" %}
+                <a href="{% url 'hospitals:hospital_overview' hospital.id %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Return to Facility Overview
+                </a>
+            {% elif user.role == "Staff" %}
+                <a href="{% url 'accounts:staff_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Return to Staff Dashboard
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Page Executive Summary Header -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-user-injured fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Clinical Health Record</span>
+                <h1 class="h2 mb-0 fw-bold">{{ patient.user.first_name }} {{ patient.user.last_name }}</h1>
+            </div>
+        </div>
+        <div class="col-sm-auto">
+            {% if user.role in "Admin Staff" %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'patients:patient_list' %}{% if hospital %}?hospital_id={{ hospital.id }}{% endif %}" class="btn btn-light border text-secondary px-4 fw-medium">
+                        Back to Directory
+                    </a>
+                    <a href="{% url 'patients:patientprofile_update' patient.pk %}" class="btn btn-primary px-4 fw-medium d-inline-flex align-items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-user-gear small"></i>
+                        <span>Modify Profile</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Structural Layout Matrix Split -->
+    <div class="row g-4">
+
+        <!-- Left Hand Dashboard: Demographics & Assignments -->
+        <div class="col-lg-4">
+            <!-- Core Personal Information Card -->
+            <div class="card shadow-sm profile-section-card overflow-hidden mb-4">
+                <div class="bg-primary" style="height: 4px;"></div>
+                <div class="card-body p-4">
+                    <h3 class="section-headline mb-4">Personal Information</h3>
+
+                    <div class="metric-item">
+                        <div class="metric-title">System Email Identity</div>
+                        <div class="metric-data text-break"><i class="fa-regular fa-envelope me-1.5 text-muted small"></i>{{ patient.user.email }}</div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Direct Contact Line</div>
+                        <div class="metric-data"><i class="fa-solid fa-phone me-1.5 text-muted small"></i>{{ patient.phone_number }}</div>
+                    </div>
+
+                    <div class="row g-2 metric-item">
+                        <div class="col-6">
+                            <div class="metric-title">Date of Birth</div>
+                            <div class="metric-data">{{ patient.date_of_birth }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-title">Gender</div>
+                            <div class="metric-data">{{ patient.get_gender_display }}</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-title">Blood Group Index</div>
+                        <div class="metric-data">
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold fs-7">
+                                {{ patient.blood_type }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="metric-item mb-0">
+                        <div class="metric-title">Residential Home Address</div>
+                        <div class="metric-data small text-muted-emphasis"><i class="fa-solid fa-location-dot me-1.5 text-muted small"></i>{{ patient.address }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facility Assignment Card -->
+            <div class="card shadow-sm profile-section-card overflow-hidden">
+                <div class="bg-secondary" style="height: 4px;"></div>
+                <div class="card-body p-4">
+                    <h3 class="section-headline mb-3">Facility Affiliation</h3>
+                    <div class="d-flex align-items-center gap-2 text-dark-emphasis fw-medium small">
+                        <i class="fa-solid fa-hospital text-muted opacity-75"></i>
+                        <span>{{ patient.user.hospital|default:"System Unassigned Network" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Hand Dashboard: Clinical Histories & Emergency Nodes -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm profile-section-card overflow-hidden h-100">
+                <div class="bg-info" style="height: 4px;"></div>
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Clinical Medical Profiles -->
+                    <h3 class="section-headline mb-4">Clinical Information Registry</h3>
+
+                    <div class="mb-4">
+                        <div class="p-3 rounded-3 allergy-alert-box">
+                            <div class="metric-title text-warning-emphasis"><i class="fa-solid fa-hand-dots me-1.5 small"></i>Allergies & Pathological Sensitivities</div>
+                            <div class="metric-data text-dark-emphasis fw-medium mt-0.5">{{ patient.allergies|default:"No critical hyper-sensitivities or allergic variants on file." }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 bg-white h-100">
+                                <div class="metric-title text-dark"><i class="fa-solid fa-heart-pulse text-muted me-1.5 small"></i>Chronic Anomalies & Pathology</div>
+                                <div class="metric-data text-muted small mt-1.5">{{ patient.chronic_conditions|default:"No active chronic clinical symptoms recorded on standard file." }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 bg-white h-100">
+                                <div class="metric-title text-dark"><i class="fa-solid fa-capsules text-muted me-1.5 small"></i>Maintenance Medications</div>
+                                <div class="metric-data text-muted small mt-1.5">{{ patient.medications|default:"No tracked daily clinical prescriptions or pharmaceutical regimens logged." }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Protocol System Contact Links -->
+                    <h3 class="section-headline mb-4 text-danger">Emergency Action Contact Protocol</h3>
+                    <div class="row g-3 bg-light rounded-3 p-4 mx-0">
+                        <div class="col-md-4">
+                            <div class="metric-title">Guarantor Full Name</div>
+                            <div class="metric-data fw-bold text-dark">{{ patient.emergency_contact_name }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-title">Kinship / Relation</div>
+                            <div class="metric-data text-secondary">{{ patient.emergency_contact_relation }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-title">Direct Contact Hotline</div>
+                            <div class="metric-data fw-bold text-primary">
+                                <i class="fa-solid fa-phone me-1 small"></i>{{ patient.emergency_contact_number }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

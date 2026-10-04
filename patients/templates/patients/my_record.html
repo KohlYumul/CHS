@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}My Medical History{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Health Record Feed Cards */
+    .record-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+        margin-bottom: 2rem;
+    }
+    .comment-thread-box {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.25rem;
+    }
+    .comment-node {
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px dashed #e9ecef;
+    }
+    .comment-node:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+    .action-btn-sm {
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Top Navigation Actions Link -->
+    <div class="mb-4">
+        <a href="{% url 'accounts:patient_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to Patient Dashboard
+        </a>
+    </div>
+
+    <!-- Page Header Panel Layout -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-folder-medical fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Personal Clinical Roster</span>
+                <h1 class="h2 mb-0 fw-bold">My Medical Records</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Records Feed Iterator -->
+    {% if records %}
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+
+                {% for record in records %}
+                    <div class="card shadow-sm record-card overflow-hidden">
+                        <!-- Top Brand Indicator Accent Block Line -->
+                        <div class="bg-primary" style="height: 4px;"></div>
+
+                        <div class="card-body p-4 p-md-5">
+                            <!-- Record Metadata Header Row -->
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-2 mb-4">
+                                <div>
+                                    <h3 class="h4 fw-bold text-dark mb-1">{{ record.title }}</h3>
+                                    <div class="text-secondary small fw-medium">
+                                        <i class="fa-regular fa-calendar-check me-1.5 opacity-75"></i>Logged on {{ record.date_created|date:"F d, Y" }}
+                                    </div>
+                                </div>
+
+                                <!-- Tool and Document Action Accessors -->
+                                <div class="d-flex gap-2 mt-2 mt-sm-0">
+                                    {% if record.file %}
+                                        <a href="{{ record.file.url }}" target="_blank" class="btn btn-light border text-secondary action-btn-sm d-inline-flex align-items-center gap-1.5">
+                                            <i class="fa-solid fa-file-pdf text-danger"></i>
+                                            <span>View File</span>
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'patients:comment_create' record.pk %}" class="btn btn-primary action-btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm">
+                                        <i class="fa-solid fa-comment-medical small"></i>
+                                        <span>Add Comment</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Integrated Internal Comment Timelines -->
+                            {% if record.comments.all %}
+                                <div class="comment-thread-box mt-4">
+                                    <h4 class="h6 text-uppercase tracking-wider fw-bold text-secondary mb-3">
+                                        <i class="fa-solid fa-comments me-1.5 small text-muted"></i>Notes & Comments
+                                    </h4>
+
+                                    <div class="d-flex flex-column">
+                                        {% for comment in record.comments.all %}
+                                            <div class="comment-node d-flex justify-content-between align-items-start gap-3">
+                                                <div>
+                                                    <span class="fw-bold text-dark small d-block mb-0.5">
+                                                        {{ comment.author.first_name }} {{ comment.author.last_name }}
+                                                        {% if comment.author == user %}
+                                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border ms-1 fw-medium" style="font-size: 0.65rem;">You</span>
+                                                        {% endif %}
+                                                    </span>
+                                                    <p class="text-muted small mb-0">{{ comment.content }}</p>
+                                                </div>
+
+                                                <!-- Secure Controlled Comment Revocation Triggers -->
+                                                {% if comment.author == user %}
+                                                    <a href="{% url 'patients:comment_delete' comment.pk %}" class="btn btn-link link-danger p-1 text-decoration-none lh-1 rounded" title="Delete Comment">
+                                                        <i class="fa-solid fa-circle-xmark fs-5 opacity-75"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% else %}
+        <!-- Blank Directory Fallback Display Frame Box -->
+        <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-folder-open fs-3"></i>
+                </div>
+                <h4 class="h5 fw-bold text-secondary mb-1">No Medical Records on File</h4>
+                <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                    There are currently no clinical documents, health charts, or diagnostic records attached to your system profile node.
+                </p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

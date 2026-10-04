@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Directory{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Grid Roster Frame Cards */
+    .directory-card {
+        border: none;
+        border-radius: 14px;
+        background-color: #ffffff;
+        transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    .directory-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    }
+    .card-meta-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #8c98a5;
+        text-transform: uppercase;
+        letter-spacing: 0.25px;
+        margin-bottom: 0.1rem;
+    }
+    .card-meta-value {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #344054;
+    }
+    .card-action-btn {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Top Action Context Breadcrumbs Links -->
+    <div class="mb-4">
+        {% if hospital %}
+            {% if user.role == "Admin" %}
+                <a href="{% url 'hospitals:hospital_overview' hospital.id %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Return to Facility Overview
+                </a>
+            {% elif user.role == "Staff" %}
+                <a href="{% url 'accounts:staff_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Return to Staff Dashboard
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Page Directory Header Block Section -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-users-medical fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Managed Records Node</span>
+                <h1 class="h2 mb-0 fw-bold">
+                    Patients Directory
+                    {% if hospital %}<span class="text-muted fw-normal fs-4">| {{ hospital.name }}</span>{% endif %}
+                </h1>
+            </div>
+        </div>
+        <div class="col-sm-auto">
+            {% if user.role in "Admin Staff" %}
+                <a href="{% url 'patients:patientprofile_create' %}{% if hospital %}?hospital_id={{ hospital.id }}{% endif %}" class="btn btn-primary px-4 fw-medium d-inline-flex align-items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-user-plus small"></i>
+                    <span>Add Patient Record</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Interactive Registry Roster Display Frame Matrix -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for patient in patients %}
+            <div class="col">
+                <div class="card h-100 shadow-sm directory-card overflow-hidden">
+                    <!-- Identity Top Indicator Border Line accent -->
+                    <div class="bg-primary bg-opacity-75" style="height: 3px;"></div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <!-- Identity Avatar / Header Stack Block -->
+                        <div class="d-flex align-items-center gap-2.5 mb-4">
+                            <div class="bg-light text-secondary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                                <i class="fa-solid fa-user-injured small"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <h5 class="card-title h6 fw-bold text-dark text-truncate mb-0">{{ patient.user.first_name }} {{ patient.user.last_name }}</h5>
+                                <span class="text-muted small text-truncate d-block">{{ patient.user.email }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Metadata Grid Specifications Elements stack -->
+                        <div class="mb-3">
+                            <div class="card-meta-label">Date of Birth</div>
+                            <div class="card-meta-value small"><i class="fa-regular fa-calendar me-1.5 opacity-50"></i>{{ patient.date_of_birth|default:"&mdash;" }}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="card-meta-label">Biological Gender</div>
+                            <div class="card-meta-value small"><i class="fa-solid fa-venus-mars me-1.5 opacity-50"></i>{{ patient.gender|default:"&mdash;" }}</div>
+                        </div>
+
+                        <div class="mb-4 mt-auto">
+                            <div class="card-meta-label">Hospital Affiliation</div>
+                            <div class="card-meta-value small text-truncate"><i class="fa-solid fa-hospital me-1.5 opacity-50"></i>{{ patient.user.hospital|default:"Network Standalone" }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Card Interactive Control Footer Context Triggers -->
+                    {% if user.role in "Admin Staff" %}
+                        <div class="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-center gap-2">
+                            {% if hospital %}
+                                <a href="{% url 'patients:patientprofile_update' patient.pk %}?hospital_id={{ hospital.id }}" class="btn btn-outline-light border text-secondary card-action-btn flex-grow-1 text-center">
+                                    Edit
+                                </a>
+                                <a href="{% url 'patients:patient_detail' patient.pk %}?hospital_id={{ hospital.id }}" class="btn btn-primary card-action-btn flex-grow-1 text-center shadow-sm">
+                                    View File
+                                </a>
+                            {% else %}
+                                <a href="{% url 'patients:patientprofile_update' patient.pk %}" class="btn btn-outline-light border text-secondary card-action-btn flex-grow-1 text-center">
+                                    Edit
+                                </a>
+                                <a href="{% url 'patients:patient_detail' patient.pk %}" class="btn btn-primary card-action-btn flex-grow-1 text-center shadow-sm">
+                                    View File
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <!-- Blank Directory Fallback Display Frame Box -->
+            <div class="col-12 w-100">
+                <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white mx-auto" style="max-width: 600px;">
+                    <div class="card-body">
+                        <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                            <i class="fa-solid fa-users-slash fs-3"></i>
+                        </div>
+                        <h4 class="h5 fw-bold text-secondary mb-1">No Patient Records Logged</h4>
+                        <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                            There are currently no active patient directory profiles matched to the system parameters {% if hospital %}for {{ hospital.name }}{% endif %}.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

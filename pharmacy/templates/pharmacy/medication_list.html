@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Available Medications - MedCentral{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Catalog Card Enhancements */
+    .med-card {
+        border: none;
+        border-radius: 12px;
+        background-color: #ffffff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .med-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+    .med-title {
+        color: #212529;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+    }
+    .stock-indicator {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation & Back Link -->
+<div class="mb-4">
+    <a href="{% url 'accounts:patient_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Page Header Dashboard Title -->
+<div class="row align-items-center mb-5 g-3">
+    <div class="col-auto">
+        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+            <i class="fa-solid fa-prescription-bottle-medical fs-3"></i>
+        </div>
+    </div>
+    <div class="col">
+        <span class="text-uppercase text-muted tracking-wider small fw-bold">Pharmacy Store</span>
+        <h1 class="h2 mb-0 fw-bold">
+            Available Medications
+            {% if hospital %}
+                <span class="text-secondary fw-normal fs-4">| {{ hospital.name }}</span>
+            {% endif %}
+        </h1>
+    </div>
+</div>
+
+<!-- Product Grid Catalog Display -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+    {% for med in medications %}
+        <div class="col">
+            <div class="card h-100 shadow-sm med-card p-4 d-flex flex-column justify-content-between">
+                <div>
+                    <!-- Product Header Line -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h3 class="h5 med-title mb-0 text-truncate pe-2">{{ med.name }}</h3>
+
+                        <!-- Real-time Badge Stock Validation Engine -->
+                        {% if med.quantity > 0 %}
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 stock-indicator">
+                                <i class="fa-solid fa-box-open me-1"></i> In Stock ({{ med.quantity }})
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 stock-indicator">
+                                <i class="fa-solid fa-ban me-1"></i> Out of Stock
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Medication Body Text Description -->
+                    <p class="text-secondary small mb-4 line-clamp" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 4.5em;">
+                        {{ med.description }}
+                    </p>
+                </div>
+
+                <!-- Footer Call to Action Controls -->
+                <div class="border-top pt-3 mt-auto">
+                    {% if med.quantity > 0 %}
+                        {% if user.role == "Patient" %}
+                            <a href="{% url 'pharmacy:buy_medication' med.id %}" class="btn btn-primary w-100 fw-medium d-flex align-items-center justify-content-center gap-2 py-2">
+                                <i class="fa-solid fa-cart-shopping small"></i>
+                                <span>Purchase Medication</span>
+                            </a>
+                        {% else %}
+                            {% if med.prescription_required %}
+                                <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-0 py-2 px-3 small" role="alert">
+                                    <i class="fa-solid fa-file-signature text-warning me-2 fs-5"></i>
+                                    <div class="fw-medium text-dark-emphasis">Prescription validation required</div>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-2 bg-light rounded text-muted small fw-medium">
+                                    <i class="fa-solid fa-circle-info me-1"></i> Patient view active for purchase
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <button type="button" class="btn btn-light border w-100 text-muted py-2 fw-medium" disabled>
+                            <i class="fa-solid fa-hourglass-empty me-1 small"></i> Temporarily Unavailable
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <!-- Empty State Fallback Screen -->
+        <div class="col-12 w-100">
+            <div class="text-center py-5 bg-white border-0 rounded-3 shadow-sm">
+                <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                    <i class="fa-solid fa-capsules fs-2"></i>
+                </div>
+                <h4 class="h5 fw-bold text-secondary mb-1">No Over-The-Counter Medications</h4>
+                <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                    There are currently no catalog profiles matching open over-the-counter access models right now.
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

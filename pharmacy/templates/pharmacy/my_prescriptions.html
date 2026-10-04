@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}My Prescriptions{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Table Registry Layout Styling */
+    .table-responsive {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .custom-table {
+        margin-bottom: 0;
+        background-color: #ffffff;
+    }
+    .custom-table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .custom-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    .custom-table tbody tr:hover {
+        background-color: #fafdff;
+    }
+    .custom-table tbody td {
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+    }
+    .prescription-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.4em 0.8em;
+        border-radius: 50px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation & Back Link -->
+<div class="mb-4">
+    <a href="{% url 'accounts:patient_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Page Header Dashboard Title -->
+<div class="row align-items-center mb-5 g-3">
+    <div class="col-auto">
+        <div class="bg-success bg-opacity-10 text-success rounded-3 p-3">
+            <i class="fa-solid fa-file-prescription fs-3"></i>
+        </div>
+    </div>
+    <div class="col">
+        <span class="text-uppercase text-muted tracking-wider small fw-bold">Patient Portal</span>
+        <h1 class="h2 mb-0 fw-bold">My Clinical Prescriptions</h1>
+        <p class="text-muted small mb-0">Track, fulfill, and review items issued directly by your medical providers.</p>
+    </div>
+</div>
+
+<!-- Main Prescriptions Table Block -->
+{% if prescriptions %}
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="table-responsive">
+            <table class="table custom-table align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 45%;">Medication</th>
+                        <th style="width: 15%;">Prescribed Qty</th>
+                        <th style="width: 20%;">Fulfillment Status</th>
+                        <th style="width: 20%; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pres in prescriptions %}
+                        <tr>
+                            <!-- Medication Name & Context -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-capsules text-secondary opacity-50 fs-5"></i>
+                                    <div>
+                                        <span class="fw-semibold text-dark d-block">{{ pres.medication.name }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Prescribed Quantity -->
+                            <td>
+                                <span class="text-secondary fw-medium">{{ pres.quantity }} Units</span>
+                            </td>
+
+                            <!-- State Indicator Pill -->
+                            <td>
+                                {% if pres.is_active %}
+                                    <span class="badge bg-success bg-opacity-10 text-success prescription-badge">
+                                        <i class="fa-solid fa-circle-check me-1 small"></i> Active / Open
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary prescription-badge">
+                                        <i class="fa-solid fa-clock-rotate-left me-1 small"></i> Fulfilled
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Execution Context Button -->
+                            <td style="text-align: right;">
+                                {% if pres.is_active %}
+                                    <a href="{% url 'pharmacy:buy_from_prescription' pres.id %}" class="btn btn-primary btn-sm px-3 fw-medium rounded-pill transition">
+                                        <i class="fa-solid fa-cart-shopping me-1 small"></i> Fulfill Order
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small px-2">
+                                        <i class="fa-solid fa-lock text-opacity-25 me-1"></i> Locked
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <!-- Empty State Informational View Layout -->
+    <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-body">
+            <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                <i class="fa-solid fa-file-prescription fs-2"></i>
+            </div>
+            <h4 class="h5 fw-bold text-secondary mb-1">No Active Prescriptions Found</h4>
+            <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                You currently have no open or historical prescription items assigned to your profile record right now.
+            </p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Purchase Restricted{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Restriction Card Styling */
+    .restriction-card {
+        border: none;
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+    .medication-title-card {
+        background-color: #f8f9fa;
+        border-left: 4px solid #dc3545;
+        border-radius: 0 8px 8px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-8 col-lg-6">
+
+        <!-- Main Restriction Layout Card -->
+        <div class="card shadow-sm restriction-card overflow-hidden">
+            <!-- Global danger status accent boundary strip -->
+            <div class="bg-danger" style="height: 4px;"></div>
+
+            <div class="card-body p-4 p-md-5 text-center">
+
+                <!-- Explicit Hazard Indicator Header -->
+                <div class="text-danger mb-3">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 72px; height: 72px;">
+                        <i class="fa-solid fa-hand-holding-medical fs-2"></i>
+                    </div>
+                </div>
+
+                <h2 class="h4 fw-bold text-dark mb-2">Purchase Action Deferred</h2>
+                <p class="text-muted small mb-4">The pharmacy interface is unable to clear this transaction sequence under current validation constraints.</p>
+
+                <!-- Target Restricted Medicine Identification Area -->
+                <div class="medication-title-card p-3 text-start mb-4">
+                    <span class="text-uppercase text-muted tracking-wider small fw-bold d-block mb-1">Target Product Profile</span>
+                    <h3 class="h5 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-capsules text-danger opacity-70 small"></i>
+                        {{ medication.name }}
+                    </h3>
+                </div>
+
+                <!-- Explanation Reason Container Block -->
+                <div class="alert alert-warning border-0 bg-warning bg-opacity-10 text-start p-3 rounded-3 mb-5 d-flex align-items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-warning mt-1 flex-shrink-0"></i>
+                    <div>
+                        <span class="fw-semibold text-dark-emphasis d-block small mb-1">System Verification Feedback:</span>
+                        <p class="text-secondary small mb-0 lh-base">{{ reason }}</p>
+                    </div>
+                </div>
+
+                <!-- Action Button Return Flow Controls -->
+                <div class="border-top pt-4">
+                    <a href="{% url 'pharmacy:medication_list' %}?hospital_id={{ hospital.id }}" class="btn btn-outline-secondary px-4 py-2 fw-medium w-100 w-sm-auto d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="fa-solid fa-arrow-left small"></i>
+                        <span>Return to Medications Portal</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

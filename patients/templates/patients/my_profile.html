@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}My Health Profile - MedCentral{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Profile Information Framework Cards */
+    .profile-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+    .info-group-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #495057;
+        border-bottom: 2px solid #f1f3f5;
+        padding-bottom: 0.5rem;
+    }
+    .metric-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.25px;
+        margin-bottom: 0.15rem;
+    }
+    .metric-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #212529;
+    }
+    .clinical-banner {
+        background-color: #fffdf6;
+        border-left: 4px solid #ffc107;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Page Header Summary Section -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-id-card fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Personal Account Node</span>
+                <h1 class="h2 mb-0 fw-bold">My Personal Profile</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Hand Column: Primary Profile & Demographics -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm profile-card overflow-hidden">
+                <div class="bg-primary" style="height: 4px;"></div>
+                <div class="card-body p-4">
+                    <!-- Avatar Context Display Placeholder -->
+                    <div class="text-center mb-4">
+                        <div class="bg-light text-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                            <i class="fa-solid fa-user-shield fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ profile.user.first_name }} {{ profile.user.last_name }}</h5>
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary border px-2.5 py-1 fw-semibold small">
+                            {{ user.role|default:"Patient Client" }}
+                        </span>
+                    </div>
+
+                    <!-- Identity Specifications Block -->
+                    <h3 class="info-group-title mb-3 mt-4">Account Diagnostics</h3>
+
+                    <div class="mb-3">
+                        <div class="metric-label">System Identity / Email</div>
+                        <div class="metric-value text-break"><i class="fa-regular fa-envelope me-1.5 small text-muted"></i>{{ profile.user.email }}</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="metric-label">Contact Link Number</div>
+                        <div class="metric-value"><i class="fa-solid fa-phone me-1.5 small text-muted"></i>{{ profile.phone_number|default:"&mdash;" }}</div>
+                    </div>
+
+                    <div class="mb-0">
+                        <div class="metric-label">Registered Residential Address</div>
+                        <div class="metric-value small"><i class="fa-solid fa-location-dot me-1.5 small text-muted"></i>{{ profile.address|default:"&mdash;" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Hand Column: Clinical History & Emergency Data Links -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm profile-card overflow-hidden h-100">
+                <div class="bg-info" style="height: 4px;"></div>
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Section 1: Demographics Metrics -->
+                    <h3 class="info-group-title mb-4">Demographics & Vital Parameters</h3>
+                    <div class="row g-3 mb-5">
+                        <div class="col-sm-4">
+                            <div class="bg-light rounded-3 p-3">
+                                <div class="metric-label">Date of Birth</div>
+                                <div class="metric-value fw-bold">{{ profile.date_of_birth|default:"&mdash;" }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="bg-light rounded-3 p-3">
+                                <div class="metric-label">Biological Gender</div>
+                                <div class="metric-value fw-bold">{{ profile.gender|default:"&mdash;" }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="bg-light rounded-3 p-3">
+                                <div class="metric-label">Blood Type Designation</div>
+                                <div class="metric-value fw-bold text-danger">{{ profile.blood_type|default:"&mdash;" }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Clinical Medical Information Registry -->
+                    <h3 class="info-group-title mb-4">Core Medical Information Record</h3>
+                    <div class="row g-3 mb-5">
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 clinical-banner">
+                                <div class="metric-label text-warning-emphasis"><i class="fa-solid fa-hand-dots me-1.5"></i>Allergies & Sensitivities</div>
+                                <div class="metric-value text-dark-emphasis fw-medium">{{ profile.allergies|default:"No active hypersensitivities or allergic profiles logged." }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 bg-white">
+                                <div class="metric-label text-dark"><i class="fa-solid fa-heart-pulse me-1.5 text-muted"></i>Chronic Pathologies</div>
+                                <div class="metric-value text-muted small mt-1">{{ profile.chronic_conditions|default:"No logged chronic medical anomalies registered." }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 bg-white">
+                                <div class="metric-label text-dark"><i class="fa-solid fa-capsules me-1.5 text-muted"></i>Current Active Medications</div>
+                                <div class="metric-value text-muted small mt-1">{{ profile.medications|default:"No maintenance pharmacotherapy logged on file." }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Emergency Protocols Contact Data -->
+                    <h3 class="info-group-title mb-4 text-danger">Emergency Action Contact Protocol</h3>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="metric-label">Designated Guarantor Contact</div>
+                            <div class="metric-value fw-bold text-dark">{{ profile.emergency_contact_name|default:"&mdash;" }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-label">Kinship / Relationship</div>
+                            <div class="metric-value text-secondary">{{ profile.emergency_contact_relation|default:"&mdash;" }}</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-label">Direct Hotline Contact</div>
+                            <div class="metric-value fw-bold text-primary">
+                                {% if profile.emergency_contact_number %}
+                                    <i class="fa-solid fa-phone me-1 small"></i>{{ profile.emergency_contact_number }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard - MedCentral{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard-specific interactive cards */
+    .dashboard-card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #ffffff;
+        text-decoration: none;
+        color: inherit;
+    }
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+    .dashboard-card:hover h4 {
+        color: #0d6efd;
+    }
+    .section-title {
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row align-items-center mb-5">
+    <div class="col-auto">
+        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+            <i class="fa-solid fa-user-doctor fs-3"></i>
+        </div>
+    </div>
+    <div class="col">
+        <span class="text-uppercase text-muted tracking-wider small fw-bold">Hospital Operations</span>
+        <h1 class="h2 mb-0 fw-bold">
+            Staff Dashboard
+            {% if hospital %}
+                <span class="text-secondary fw-normal fs-4">| {{ hospital.name }}</span>
+            {% endif %}
+        </h1>
+    </div>
+</div>
+
+<!-- Section 1: Clinical Operations & Patient Care -->
+<div class="mb-4">
+    <h3 class="section-title text-uppercase text-secondary fw-bold mb-3 d-flex align-items-center">
+        <i class="fa-solid fa-kit-medical text-primary me-2"></i> Clinical & Patient Operations
+    </h3>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <!-- Prescribe Medication -->
+        <div class="col">
+            <a href="{% url 'pharmacy:prescribe_medication' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #0d6efd;">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2 d-inline-block mb-3">
+                    <i class="fa-solid fa-file-prescription fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">Prescribe Medication</h4>
+                <p class="text-muted small mb-0">Issue new prescriptions and coordinate dosages for active patients.</p>
+            </a>
+        </div>
+
+        <!-- View Patients -->
+        <div class="col">
+            <a href="{% url 'patients:patient_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #198754;">
+                <div class="bg-success bg-opacity-10 text-success rounded-3 p-2 d-inline-block mb-3">
+                    <i class="fa-solid fa-hospital-user fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">View Patients</h4>
+                <p class="text-muted small mb-0">Access registered patient records, vitals, and general demographics.</p>
+            </a>
+        </div>
+
+        <!-- View Patient Records -->
+        <div class="col">
+            <a href="{% url 'patients:record_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #0dcaf0;">
+                <div class="bg-info bg-opacity-10 text-info rounded-3 p-2 d-inline-block mb-3">
+                    <i class="fa-solid fa-folder-open fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">Patient Records</h4>
+                <p class="text-muted small mb-0">Review comprehensive medical histories, diagnoses, and lab results.</p>
+            </a>
+        </div>
+
+        <!-- View Reports -->
+        <div class="col">
+            <a href="{% url 'reports:report_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #6c757d;">
+                <div class="bg-secondary bg-opacity-10 text-secondary rounded-3 p-2 d-inline-block mb-3">
+                    <i class="fa-solid fa-chart-line fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">View Reports</h4>
+                <p class="text-muted small mb-0">Analyze hospital analytics, shift updates, and administrative logs.</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<hr class="my-5 border-secondary border-opacity-10">
+
+<!-- Section 2: Logistics & Inventory Management -->
+<div class="mb-5">
+    <h3 class="section-title text-uppercase text-secondary fw-bold mb-3 d-flex align-items-center">
+        <i class="fa-solid fa-boxes-stacked text-warning me-2"></i> Logistics & Inventory
+    </h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Medications -->
+        <div class="col">
+            <a href="{% url 'inventory:medication_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #ffc107;">
+                <div class="bg-warning bg-opacity-15 text-warning-dark rounded-3 p-2 d-inline-block mb-3" style="color: #856404;">
+                    <i class="fa-solid fa-pills fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">Medication Stock</h4>
+                <p class="text-muted small mb-0">Monitor, restock, and update quantities of pharmaceutical inventory.</p>
+            </a>
+        </div>
+
+        <!-- Medical Supplies -->
+        <div class="col">
+            <a href="{% url 'inventory:supply_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #fd7e14;">
+                <div class="bg-warning bg-opacity-10 text-danger rounded-3 p-2 d-inline-block mb-3" style="color: #fd7e14 !important;">
+                    <i class="fa-solid fa-box-archive fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">Medical Supplies</h4>
+                <p class="text-muted small mb-0">Manage clinical consumables, surgical kits, and basic sanitary stock.</p>
+            </a>
+        </div>
+
+        <!-- Equipment -->
+        <div class="col">
+            <a href="{% url 'inventory:equipment_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #20c997;">
+                <div class="bg-teal bg-opacity-10 text-teal rounded-3 p-2 d-inline-block mb-3" style="color: #20c997; background-color: rgba(32, 201, 151, 0.1);">
+                    <i class="fa-solid fa-stethoscope fs-4"></i>
+                </div>
+                <h4 class="h5 fw-bold mb-2">Equipment Registry</h4>
+                <p class="text-muted small mb-0">Track physical hospital machinery, maintenance logs, and operational status.</p>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

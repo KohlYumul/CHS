@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Hospitals Directory{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Table Container & Layout Styling */
+    .table-container-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+    .custom-table {
+        margin-bottom: 0;
+    }
+    .custom-table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .custom-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    .custom-table tbody tr:hover {
+        background-color: #fafdff;
+    }
+    .custom-table tbody td {
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+        color: #333333;
+        font-size: 0.95rem;
+    }
+    .action-link {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header & Main Actions -->
+<div class="row align-items-center justify-content-between mb-4 g-3">
+    <div class="col-sm-auto">
+        <h2 class="fw-bold text-dark mb-0">Hospitals</h2>
+    </div>
+    <div class="col-sm-auto">
+        <a href="{% url 'hospitals:hospital_create' %}" class="btn btn-primary px-4 py-2 fw-medium d-inline-flex align-items-center gap-2 shadow-sm rounded-3">
+            <i class="fa-solid fa-plus small"></i>
+            <span>Add Hospital</span>
+        </a>
+    </div>
+</div>
+
+<!-- Main Directory Table Card -->
+{% if hospitals %}
+    <div class="card shadow-sm table-container-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table custom-table align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Name</th>
+                        <th style="width: 25%;">Address</th>
+                        <th style="width: 20%;">Contact Info</th>
+                        <th style="width: 15%;">Description</th>
+                        <th style="width: 15%; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hospital in hospitals %}
+                        <tr>
+                            <!-- Hospital Name -->
+                            <td>
+                                <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-hospital text-primary opacity-75 fs-5"></i>
+                                    <span>{{ hospital.name }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Address Details -->
+                            <td>
+                                <span class="text-secondary small text-wrap d-block" style="max-width: 250px;">
+                                    {{ hospital.address }}
+                                </span>
+                            </td>
+
+                            <!-- Phone & Email Group -->
+                            <td>
+                                <div class="small">
+                                    <span class="text-dark d-block mb-1 fw-medium">
+                                        <i class="fa-solid fa-phone text-muted me-1 small"></i>{{ hospital.contact_number }}
+                                    </span>
+                                    <span class="text-muted d-block text-truncate" style="max-width: 180px;" title="{{ hospital.email }}">
+                                        <i class="fa-regular fa-envelope text-muted me-1 small"></i>{{ hospital.email }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Description Summary -->
+                            <td>
+                                <span class="text-muted small d-block text-truncate" style="max-width: 180px; font-style: italic;">
+                                    {{ hospital.description|default:"—"|truncatewords:10 }}
+                                </span>
+                            </td>
+
+                            <!-- Action Operations Text-Links -->
+                            <td style="text-align: right;">
+                                <div class="d-inline-flex align-items-center gap-3">
+                                    <a href="{% url 'hospitals:hospital_overview' hospital.pk %}" class="action-link text-info" title="Overview Panel">
+                                        Overview
+                                    </a>
+                                    <a href="{% url 'hospitals:hospital_update' hospital.pk %}" class="action-link text-secondary" title="Edit Entry">
+                                        Edit
+                                    </a>
+                                    <a href="{% url 'hospitals:hospital_delete' hospital.pk %}" class="action-link text-danger" title="Remove Record">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <!-- Fallback Empty State Frame Box -->
+    <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-body">
+            <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                <i class="fa-solid fa-building-circle-exclamation fs-3"></i>
+            </div>
+            <h4 class="h5 fw-bold text-secondary mb-1">No Hospitals Found</h4>
+            <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                There are currently no healthcare facilities registered under the medical network catalog.
+            </p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

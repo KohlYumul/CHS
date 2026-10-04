@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+block title %}Confirm Deletion - {{ hospital.name }}
+
+{% block extra_css %}
+<style>
+    /* Destructive Safety Card Focus Styling */
+    .delete-danger-card {
+        border: none;
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+    .entity-preview-box {
+        background-color: #fff5f5;
+        border-left: 4px solid #dc3545;
+        border-radius: 0 8px 8px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-8 col-lg-6">
+
+        <!-- Breadcrumb Navigation Dismiss Back Link -->
+        <div class="mb-3">
+            <a href="{% url 'hospitals:hospital_list' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Back to Hospital Registry
+            </a>
+        </div>
+
+        <!-- Main Destructive Warning Box Frame Wrap -->
+        <div class="card shadow-sm delete-danger-card overflow-hidden">
+            <!-- Security Warning Hard Boundary Strip Accent -->
+            <div class="bg-danger" style="height: 4px;"></div>
+
+            <div class="card-body p-4 p-md-5 text-center">
+
+                <!-- Explicit System Hazard Alert Icon -->
+                <div class="text-danger mb-3">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 72px; height: 72px;">
+                        <i class="fa-solid fa-triangle-exclamation fs-2"></i>
+                    </div>
+                </div>
+
+                <h1 class="h4 fw-bold text-dark mb-2">Critical Action Requested</h1>
+                <p class="text-muted small mb-4">You are about to initiate an irreversible administrative system override sequence.</p>
+
+                <!-- Targeted Hospital Identification Preview Box -->
+                <div class="entity-preview-box p-3 text-start mb-4">
+                    <span class="text-uppercase text-danger tracking-wider small fw-bold d-block mb-1" style="font-size: 0.7rem;">Target Profile Entry</span>
+                    <h2 class="h5 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-hospital text-danger opacity-75 small"></i>
+                        {{ hospital.name }}
+                    </h2>
+                </div>
+
+                <!-- Legal/Data Policy Structural Warning Notice -->
+                <div class="alert alert-danger border-0 text-start p-3 rounded-3 mb-5 d-flex align-items-start gap-2 small" style="background-color: rgba(220, 53, 69, 0.05);">
+                    <i class="fa-solid fa-circle-info text-danger mt-1 flex-shrink-0"></i>
+                    <div>
+                        <span class="fw-semibold text-danger d-block mb-1">Impact Evaluation Warning:</span>
+                        <p class="text-secondary mb-0 lh-base">
+                            Proceeding will completely detach all related medication supplies, staff assignments, and pharmacy records bound to this hospital profile. This data cannot be automatically restored.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Destructive Target Submission Form Element -->
+                <form method="post" id="destructive-action-form">
+                    {% csrf_token %}
+
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center align-items-center border-top pt-4">
+                        <!-- Navigation Safe Dismiss Control Link Button -->
+                        <a href="{% url 'hospitals:hospital_list' %}" class="btn btn-light border px-4 py-2 w-100 w-sm-50 order-2 order-sm-1 text-secondary fw-medium">
+                            Abort, Cancel
+                        </a>
+
+                        <!-- Core Final Irreversible Submission Trigger Button -->
+                        <button type="submit" class="btn btn-danger px-4 py-2 w-100 w-sm-50 order-1 order-sm-2 fw-medium d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-trash-can small"></i>
+                            <span>Confirm Deletion</span>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Extra Client-Side Safety Check Gate Interceptor -->
+<script>
+    document.getElementById("destructive-action-form").addEventListener("submit", function(event) {
+        const doubleCheck = confirm("FINAL WARNING:\n\nAre you absolutely positive you want to delete '{{ hospital.name }}'? This action removes dependent data lines permanently.");
+        if (!doubleCheck) {
+            event.preventDefault(); // Terminate submission sequence instantly
+        }
+    });
+</script>
+{% endblock %}
+

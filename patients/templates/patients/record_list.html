@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Records Registry{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium Clinical Feed Grid Layout */
+    .clinical-record-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+    }
+    .record-header-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .asset-preview-box {
+        background-color: #f8f9fa;
+        border: 1px dashed #dee2e6;
+        border-radius: 8px;
+    }
+    .preview-image-node {
+        max-height: 280px;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+
+    /* Nestable Dynamic Comment Feed Component */
+    .comment-thread-wrapper {
+        background-color: #fdfdfd;
+        border-top: 1px solid #f1f3f5;
+    }
+    .comment-node-item {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+    }
+    .comment-author-tag {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #495057;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- Top Action Breadcrumb Navigation Dynamic Links -->
+    <div class="mb-4">
+        {% if user.role == "Staff" %}
+            <a href="{% url 'accounts:staff_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Return to Staff Dashboard
+            </a>
+        {% elif user.role == "Admin" %}
+            <a href="{% url 'accounts:admin_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Return to Admin Dashboard
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Executive Directory Dashboard Header Block -->
+    <div class="row align-items-center justify-content-between mb-5 g-3">
+        <div class="col-sm-auto d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                <i class="fa-solid fa-folder-medical fs-3"></i>
+            </div>
+            <div>
+                <span class="text-uppercase text-muted tracking-wider small fw-bold">Clinical Repository Log</span>
+                <h1 class="h2 mb-0 fw-bold">
+                    Medical Records
+                    {% if hospital_id and user.role == "Admin" %}
+                        <span class="text-muted fw-normal fs-4">| {{ hospital.name }}</span>
+                    {% endif %}
+                </h1>
+            </div>
+        </div>
+        <div class="col-sm-auto">
+            {% if user.role == "Admin" or user.role == "Staff" %}
+                <a href="{% url 'patients:record_create' %}{% if user.role == 'Admin' and hospital_id %}?hospital_id={{ hospital_id }}{% endif %}"
+                   class="btn btn-primary px-4 fw-medium d-inline-flex align-items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-plus small"></i>
+                    <span>Add Chart Entry</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Records Feed Iterator Architecture -->
+    {% if records %}
+        <div class="row g-4 justify-content-center">
+            {% for record in records %}
+                <div class="col-12 col-xl-10">
+                    <div class="card shadow-sm clinical-record-card overflow-hidden">
+                        <div class="bg-info" style="height: 4px;"></div>
+
+                        <div class="card-body p-4 p-md-5">
+                            <!-- Card Header Info Matrix -->
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-2 mb-4">
+                                <div>
+                                    <span class="badge bg-light text-secondary border record-header-badge mb-2">
+                                        System Record Node
+                                    </span>
+                                    <h3 class="h4 fw-bold text-dark mb-1">{{ record.title }}</h3>
+                                    <div class="text-muted small fw-medium">
+                                        <i class="fa-regular fa-clock me-1.5 opacity-75"></i>Logged on {{ record.date_created|date:"M d, Y" }}
+                                    </div>
+                                </div>
+                                <div class="bg-light px-3 py-2 rounded-3 text-start text-md-end">
+                                    <div class="text-uppercase text-muted small tracking-wider fw-bold" style="font-size: 0.7rem;">Assigned Chart Patient</div>
+                                    <div class="text-dark fw-bold small"><i class="fa-solid fa-user-injured me-1.5 text-muted small"></i>{{ record.patient.user.first_name }} {{ record.patient.user.last_name }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Attached File Asset Render Control Interface -->
+                            {% if record.file %}
+                                <div class="p-3 mb-4 asset-preview-box">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fa-solid fa-paperclip text-muted fs-5"></i>
+                                            <span class="text-dark fw-medium small text-break">Document Object Associated</span>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ record.file.url }}" download class="btn btn-sm btn-white border text-secondary fw-medium px-3 d-inline-flex align-items-center gap-1.5 shadow-xs">
+                                                <i class="fa-solid fa-file-arrow-down small text-muted"></i> Download File
+                                            </a>
+                                            {% if ".pdf" in record.file.url %}
+                                                <a href="{{ record.file.url }}" target="_blank" class="btn btn-sm btn-light text-primary border border-primary-subtle fw-medium px-3 d-inline-flex align-items-center gap-1.5">
+                                                    <i class="fa-regular fa-eye small"></i> View Sandbox Preview
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Inline Diagnostic Image Preview Matrix -->
+                                    {% if ".jpg" in record.file.url or ".jpeg" in record.file.url or ".png" in record.file.url or ".gif" in record.file.url %}
+                                        <div class="text-center bg-white rounded border p-2 mt-2">
+                                            <img src="{{ record.file.url }}" alt="{{ record.title }}" class="img-fluid preview-image-node">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            <!-- Administrative Action Group Triggers Footer Control Row -->
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 border-top pt-4">
+                                <div class="d-flex gap-2">
+                                    {% if user.role == "Admin" or user.role == "Staff" %}
+                                        <a href="{% url 'patients:record_update' record.pk %}{% if user.role == 'Admin' and hospital_id %}?hospital_id={{ hospital_id }}{% endif %}"
+                                           class="btn btn-sm btn-light border text-secondary fw-medium px-3 d-inline-flex align-items-center gap-1.5">
+                                            <i class="fa-solid fa-pen-to-square text-muted small"></i> Modify Entry
+                                        </a>
+                                        <a href="{% url 'patients:record_delete' record.pk %}{% if user.role == 'Admin' and hospital_id %}?hospital_id={{ hospital_id }}{% endif %}"
+                                           class="btn btn-sm btn-light border text-danger fw-medium px-3 d-inline-flex align-items-center gap-1.5">
+                                            <i class="fa-solid fa-trash-can small text-opacity-75"></i> Purge Record
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                <a href="{% url 'patients:comment_create' record.pk %}{% if user.role == 'Admin' and hospital_id %}?hospital_id={{ hospital_id }}{% endif %}"
+                                   class="btn btn-sm btn-primary fw-medium px-4 d-inline-flex align-items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-comment-medical small"></i> Post Review Comment
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Nested Comment Annotation Log Thread Architecture -->
+                        {% if record.comments.all %}
+                            <div class="comment-thread-wrapper p-4 p-md-5">
+                                <h4 class="h6 text-uppercase tracking-wider fw-bold text-muted mb-3 d-flex align-items-center gap-2">
+                                    <i class="fa-regular fa-comments small"></i> Case Annotations & Discussion
+                                </h4>
+                                <div class="d-flex flex-column gap-3">
+                                    {% for comment in record.comments.all %}
+                                        <div class="comment-node-item shadow-xs d-flex justify-content-between align-items-start gap-3">
+                                            <div class="overflow-hidden">
+                                                <div class="comment-author-tag mb-1 d-inline-flex align-items-center gap-1.5">
+                                                    <i class="fa-solid fa-user-md small text-muted"></i>
+                                                    <span>{{ comment.author }}</span>
+                                                </div>
+                                                <p class="text-secondary small mb-0 text-break fw-normal">{{ comment.content }}</p>
+                                            </div>
+
+                                            {% if user.role == "Admin" or user.role == "Staff" or comment.author == user %}
+                                                <a href="{% url 'patients:comment_delete' comment.pk %}{% if user.role == 'Admin' and hospital_id %}?hospital_id={{ hospital_id }}{% endif %}"
+                                                   class="btn btn-link link-danger p-1 text-decoration-none lh-1 rounded flex-shrink-0 align-self-center hover-bg-danger-opacity"
+                                                   title="Delete annotation record node">
+                                                    <i class="fa-solid fa-xmark fs-5"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty Repository Placeholder Node Box -->
+        <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white mx-auto mt-4" style="max-width: 600px;">
+            <div class="card-body">
+                <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-folder-open fs-3"></i>
+                </div>
+                <h4 class="h5 fw-bold text-secondary mb-1">No Clinical Records Found</h4>
+                <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                    There are no data profiles or file entities mapped matching the directory query configurations {% if hospital_id and user.role == "Admin" %} for {{ hospital.name }}{% endif %}.
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

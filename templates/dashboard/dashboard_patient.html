@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard-specific interactive cards */
+    .dashboard-card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #ffffff;
+        text-decoration: none;
+        color: inherit;
+    }
+    .dashboard-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+    .dashboard-card:hover h4 {
+        color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row align-items-center mb-5">
+    <div class="col-auto">
+        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+            <i class="fa-solid fa-hospital-user fs-3"></i>
+        </div>
+    </div>
+    <div class="col">
+        <span class="text-uppercase text-muted tracking-wider small fw-bold">Patient Portal</span>
+        <h1 class="h2 mb-0 fw-bold">
+            Patient Dashboard
+            {% if hospital %}
+                <span class="text-secondary fw-normal fs-4">| {{ hospital.name }}</span>
+            {% endif %}
+        </h1>
+    </div>
+</div>
+
+<!-- Dashboard Grid (2x2 Layout on Medium+ Screens, 1 Column on Mobile) -->
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    <!-- Pharmacy Store -->
+    <div class="col">
+        <a href="{% url 'pharmacy:medication_list' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #0d6efd;">
+            <div class="d-flex align-items-start">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3 me-3">
+                    <i class="fa-solid fa-prescription-bottle-medical fs-4"></i>
+                </div>
+                <div>
+                    <h4 class="h5 fw-bold mb-2">Pharmacy</h4>
+                    <p class="text-muted small mb-0">Browse our certified medical catalog, check stock availability, and safely purchase your prescribed medications.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- My Prescriptions -->
+    <div class="col">
+        <a href="{% url 'pharmacy:my_prescriptions' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #198754;">
+            <div class="d-flex align-items-start">
+                <div class="bg-success bg-opacity-10 text-success rounded-3 p-3 me-3">
+                    <i class="fa-solid fa-file-prescription fs-4"></i>
+                </div>
+                <div>
+                    <h4 class="h5 fw-bold mb-2">My Prescriptions</h4>
+                    <p class="text-muted small mb-0">Access active medical prescriptions, check doctor guidance notes, and keep track of renewal intervals.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Purchase History -->
+    <div class="col">
+        <a href="{% url 'pharmacy:purchase_history' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #ffc107;">
+            <div class="d-flex align-items-start">
+                <div class="bg-warning bg-opacity-15 text-warning-dark rounded-3 p-3 me-3" style="color: #856404; background-color: rgba(255, 193, 7, 0.15);">
+                    <i class="fa-solid fa-receipt fs-4"></i>
+                </div>
+                <div>
+                    <h4 class="h5 fw-bold mb-2">Purchase History</h4>
+                    <p class="text-muted small mb-0">View invoices, past transactions, receipt summaries, and fulfillment statuses for your records.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- My Medical Records -->
+    <div class="col">
+        <a href="{% url 'patients:my_record' %}" class="card h-100 shadow-sm dashboard-card p-4" style="border-left: 4px solid #0dcaf0;">
+            <div class="d-flex align-items-start">
+                <div class="bg-info bg-opacity-10 text-info rounded-3 p-3 me-3">
+                    <i class="fa-solid fa-file-waveform fs-4"></i>
+                </div>
+                <div>
+                    <h4 class="h5 fw-bold mb-2">My Medical Records</h4>
+                    <p class="text-muted small mb-0">View or download your secure clinical documents, doctor diagnostic assessments, and lab reports.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

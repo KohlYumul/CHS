@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Purchase History{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Table Responsive Core Frame Wrapper */
+    .table-responsive {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .custom-table {
+        margin-bottom: 0;
+        background-color: #ffffff;
+    }
+    .custom-table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .custom-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    .custom-table tbody tr:hover {
+        background-color: #fafdff;
+    }
+    .custom-table tbody td {
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+        color: #333333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation Dismiss Back Link Link -->
+<div class="mb-4">
+    <a href="{% url 'accounts:patient_dashboard' %}" class="text-decoration-none text-muted small fw-medium d-inline-flex align-items-center gap-1">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Page Header Dashboard Title -->
+<div class="row align-items-center mb-5 g-3">
+    <div class="col-auto">
+        <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3" style="color: #bc8f00 !important; background-color: rgba(255, 193, 7, 0.1) !important;">
+            <i class="fa-solid fa-receipt fs-3"></i>
+        </div>
+    </div>
+    <div class="col">
+        <span class="text-uppercase text-muted tracking-wider small fw-bold">Patient Portal</span>
+        <h1 class="h2 mb-0 fw-bold">Medication Purchase History</h1>
+        <p class="text-muted small mb-0">Review past pharmacy payments, invoice records, and order fulfillment log entries.</p>
+    </div>
+</div>
+
+<!-- Main Ledger Content Block -->
+{% if purchases %}
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="table-responsive">
+            <table class="table custom-table align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 35%;">Medication Description</th>
+                        <th style="width: 15%; text-align: center;">Qty</th>
+                        <th style="width: 15%; text-align: right;">Unit Price</th>
+                        <th style="width: 15%; text-align: right;">Total Paid</th>
+                        <th style="width: 20%; text-align: right;">Date Transacted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in purchases %}
+                        <tr>
+                            <!-- Product Identification Context -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-pills text-secondary opacity-50"></i>
+                                    <span class="fw-semibold text-dark">{{ p.medication.name }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Volume Count -->
+                            <td style="text-align: center;">
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-2 small fw-medium">
+                                    {{ p.quantity }}
+                                </span>
+                            </td>
+
+                            <!-- Individual Unit Price Valuation Line -->
+                            <td style="text-align: right;" class="font-monospace text-secondary small">
+                                ₱{{ p.price_per_unit }}
+                            </td>
+
+                            <!-- Aggregated Financial Statement Sum -->
+                            <td style="text-align: right;" class="font-monospace fw-bold text-dark">
+                                ₱{{ p.total_price }}
+                            </td>
+
+                            <!-- Timestamp Metadata Details -->
+                            <td style="text-align: right;">
+                                <span class="text-muted small d-inline-flex align-items-center gap-1">
+                                    <i class="fa-regular fa-calendar-check opacity-75"></i>
+                                    {{ p.date_purchased|date:"M d, Y" }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <!-- Empty State Informational Screen Block -->
+    <div class="card text-center py-5 border-0 shadow-sm rounded-3 bg-white">
+        <div class="card-body">
+            <div class="bg-light text-muted rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                <i class="fa-solid fa-receipt fs-2"></i>
+            </div>
+            <h4 class="h5 fw-bold text-secondary mb-1">No Orders Logged Yet</h4>
+            <p class="text-muted small max-width-md mx-auto mb-0" style="max-width: 400px;">
+                You currently have no recorded transaction historical ledger data generated on your pharmacy profile.
+            </p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
