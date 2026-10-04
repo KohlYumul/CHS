@@ -68,7 +68,7 @@
                             <i class="fa-solid fa-circle-exclamation fs-5 me-2 mt-0.5 flex-shrink-0"></i>
                             <div>
                                 <span class="fw-semibold d-block mb-0.5">Login Failure</span>
-                                <p class="mb-0 text-secondary-emphasis">Invalid username or password configuration match. Please check credentials and re-enter.</p>
+                                <p class="mb-0 text-secondary-emphasis">Invalid email or password configuration match. Please check credentials and re-enter.</p>
                             </div>
                         </div>
                     {% endif %}
@@ -76,7 +76,7 @@
                     <!-- Username Field Row Entry Component -->
                     <div class="mb-3">
                         <label for="{{ form.username.id_for_label }}" class="form-label form-label-custom d-block">
-                            Username
+                            Email Address
                         </label>
                         {{ form.username }}
                         {% if form.username.errors %}
