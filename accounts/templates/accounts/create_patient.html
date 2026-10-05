@@ -1,610 +1,139 @@
 {% extends "base.html" %}
-{% load static %}
 
-{% block title %}Create Patient Account{% endblock %}
+{% block title %}Create Patient{% endblock %}
 
 {% block extra_css %}
 <style>
-    :root {
-        --mc-teal-50:  #f0fdfa;
-        --mc-teal-100: #ccfbf1;
-        --mc-teal-200: #99f6e4;
-        --mc-teal-500: #14b8a6;
-        --mc-teal-600: #0d9488;
-        --mc-teal-700: #0f766e;
+    body { background: linear-gradient(135deg, #f0fdfa, #e0f2fe); min-height: 100vh; }
+    .card-shell {
+        max-width: 640px; margin: 2rem auto; background: #fff;
+        border-radius: 16px; box-shadow: 0 15px 40px rgba(15,118,110,.08);
+        padding: 2.5rem; animation: rise .4s ease-out;
     }
-
-    /* ---------- Animated gradient background ---------- */
-    body {
-        background: linear-gradient(-45deg, #f0fdfa, #ccfbf1, #e0f2fe, #f0fdfa);
-        background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
-        min-height: 100vh;
+    @keyframes rise { from { opacity:0; transform: translateY(15px); } }
+    .card-shell h2 { font-weight:700; color:#0f172a; font-size:1.4rem; margin-bottom:.25rem; }
+    .card-shell .sub { color:#64748b; font-size:.9rem; margin-bottom:1.75rem; }
+    .card-shell label { font-weight:600; font-size:.85rem; color:#334155; margin-bottom:.35rem; display:block; }
+    .card-shell input, .card-shell select {
+        width:100%; padding:.7rem .9rem; font-size:.95rem;
+        background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:10px;
+        transition: all .2s;
     }
-
-    @keyframes gradientShift {
-        0%   { background-position: 0% 50%; }
-        50%  { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    .card-shell input:focus, .card-shell select:focus {
+        outline:0; background:#fff; border-color:#14b8a6;
+        box-shadow: 0 0 0 3px rgba(20,184,166,.15);
     }
-
-    /* ---------- Floating decorative orbs ---------- */
-    .orbs {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-    }
-
-    .orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(60px);
-        opacity: 0.4;
-        animation: float 12s ease-in-out infinite;
-    }
-
-    .orb-1 { width: 320px; height: 320px; background: #5eead4; top: 8%;  left: 4%;  }
-    .orb-2 { width: 260px; height: 260px; background: #99f6e4; bottom: 12%; right: 8%; animation-delay: -4s; }
-    .orb-3 { width: 200px; height: 200px; background: #a5f3fc; top: 55%; left: 42%; animation-delay: -8s; }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0) translateX(0); }
-        50%      { transform: translateY(-30px) translateX(20px); }
-    }
-
-    /* ---------- Layout wrapper ---------- */
-    .reg-wrapper {
-        position: relative;
-        z-index: 1;
-        min-height: 90vh;
-        padding: 2rem 1rem;
-    }
-
-    /* Breadcrumb */
-    .crumb {
-        max-width: 1180px;
-        margin: 0 auto 1rem;
-    }
-    .crumb a {
-        color: #64748b;
-        font-size: 0.85rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        transition: color .2s ease, transform .2s ease;
-    }
-    .crumb a:hover {
-        color: var(--mc-teal-600);
-        transform: translateX(-3px);
-    }
-
-    .reg-shell {
-        max-width: 1180px;
-        margin: 0 auto;
-        background: #ffffff;
-        border-radius: 24px;
-        box-shadow: 0 25px 60px rgba(15, 118, 110, 0.12);
-        overflow: hidden;
-        animation: shellRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    @keyframes shellRise {
-        from { opacity: 0; transform: translateY(30px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ---------- Left brand panel ---------- */
-    .brand-panel {
-        position: relative;
-        background: linear-gradient(135deg, var(--mc-teal-500) 0%, var(--mc-teal-700) 100%);
-        color: white;
-        padding: 3rem 2.5rem;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 100%;
-    }
-
-    .brand-panel::before,
-    .brand-panel::after {
-        content: '';
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.08);
-    }
-    .brand-panel::before { width: 340px; height: 340px; top: -120px; right: -120px; }
-    .brand-panel::after  { width: 260px; height: 260px; bottom: -100px; left: -80px; background: rgba(255, 255, 255, 0.05); }
-
-    .brand-content { position: relative; z-index: 2; }
-
-    .brand-icon {
-        width: 72px;
-        height: 72px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1.5rem;
-        animation: iconPulse 3s ease-in-out infinite;
-    }
-    .brand-icon i { font-size: 2rem; color: #ffffff; }
-
-    @keyframes iconPulse {
-        0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
-        50%      { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(255,255,255,0); }
-    }
-
-    .brand-title {
-        font-size: 2rem;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-        margin-bottom: 0.75rem;
-        line-height: 1.2;
-    }
-
-    .brand-subtitle {
-        font-size: 1rem;
-        opacity: 0.85;
-        margin-bottom: 2rem;
-        line-height: 1.5;
-    }
-
-    .brand-features {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    .brand-features li {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 0.9rem;
-        font-size: 0.95rem;
-        opacity: 0.9;
-    }
-    .brand-features i { color: #99f6e4; font-size: 1.1rem; }
-
-    /* ---------- Right panel ---------- */
-    .form-panel {
-        padding: 3rem 2.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .form-heading {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 0.4rem;
-        letter-spacing: -0.3px;
-    }
-
-    .form-subheading {
-        color: #64748b;
-        font-size: 0.95rem;
-        margin-bottom: 2rem;
-    }
-
-    /* ---------- Fields ---------- */
-    .field-group {
-        margin-bottom: 1.25rem;
-        opacity: 0;
-        animation: fieldRise 0.5s ease-out forwards;
-    }
-    .field-group:nth-of-type(1) { animation-delay: 0.25s; }
-    .field-group:nth-of-type(2) { animation-delay: 0.32s; }
-    .field-group:nth-of-type(3) { animation-delay: 0.39s; }
-    .field-group:nth-of-type(4) { animation-delay: 0.46s; }
-    .field-group:nth-of-type(5) { animation-delay: 0.53s; }
-    .field-group:nth-of-type(6) { animation-delay: 0.60s; }
-
-    @keyframes fieldRise {
-        from { opacity: 0; transform: translateY(12px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .field-label {
-        font-weight: 600;
-        color: #334155;
-        font-size: 0.88rem;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .form-panel input[type="text"],
-    .form-panel input[type="email"],
-    .form-panel input[type="password"],
-    .form-panel select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        background-color: #f8fafc;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
-        transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-    }
-
-    .form-panel input:focus,
-    .form-panel select:focus {
-        outline: 0;
-        background-color: #ffffff;
-        border-color: var(--mc-teal-500);
-        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
-    }
-
-    /* ---------- Buttons ---------- */
     .btn-teal {
-        padding: 0.85rem 1.5rem;
-        background: linear-gradient(135deg, var(--mc-teal-500) 0%, var(--mc-teal-600) 100%);
-        color: #ffffff;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        position: relative;
-        overflow: hidden;
-        transition: transform .15s ease, box-shadow .15s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+        padding:.8rem 1.5rem; background:linear-gradient(135deg,#14b8a6,#0d9488);
+        color:#fff; border:none; border-radius:10px; font-weight:600;
+        transition: transform .15s, box-shadow .15s;
     }
-    .btn-teal:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(13, 148, 136, 0.35);
-        color: #ffffff;
+    .btn-teal:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(13,148,136,.3); color:#fff; }
+    .btn-ghost {
+        padding:.8rem 1.5rem; background:#f1f5f9; color:#475569;
+        border:1.5px solid #e2e8f0; border-radius:10px; font-weight:500;
+        text-decoration:none; transition: background .15s;
     }
-    .btn-teal:active { transform: translateY(0); }
-
-    .btn-teal::after {
-        content: '';
-        position: absolute;
-        top: 0; left: -75%;
-        width: 50%; height: 100%;
-        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
-        transform: skewX(-20deg);
-        transition: left .6s ease;
-    }
-    .btn-teal:hover::after { left: 125%; }
-
-    .btn-cancel {
-        padding: 0.85rem 1.5rem;
-        background: #f1f5f9;
-        color: #475569;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
-        font-weight: 500;
-        font-size: 0.95rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: background .15s ease, color .15s ease, border-color .15s ease;
-    }
-    .btn-cancel:hover {
-        background: #e2e8f0;
-        color: #334155;
-        border-color: #cbd5e1;
-    }
-
-    /* ---------- Error alert ---------- */
+    .btn-ghost:hover { background:#e2e8f0; color:#334155; }
     .alert-error {
-        background-color: #fef2f2;
-        border: 1px solid #fecaca;
-        color: #991b1b;
-        border-radius: 12px;
-        padding: 0.85rem 1rem;
-        font-size: 0.88rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.6rem;
-        margin-bottom: 1.5rem;
-        animation: shake 0.4s ease-in-out;
+        background:#fef2f2; border:1px solid #fecaca; color:#991b1b;
+        padding:.75rem 1rem; border-radius:10px; font-size:.875rem; margin-bottom:1.25rem;
     }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-6px); }
-        40%, 80% { transform: translateX(6px); }
-    }
-
-    /* ---------- Success state ---------- */
     .success-icon {
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-        background: rgba(20, 184, 166, 0.12);
-        color: var(--mc-teal-600);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1.5rem;
-        animation: successPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        position: relative;
+        width:80px; height:80px; border-radius:50%; background:rgba(20,184,166,.12);
+        color:#0d9488; display:inline-flex; align-items:center; justify-content:center;
+        margin-bottom:1.25rem; animation: pop .5s cubic-bezier(.34,1.56,.64,1);
     }
-    .success-icon i {
-        font-size: 3rem;
-        animation: checkPop 0.5s ease-out 0.3s both;
-    }
-    .success-icon::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        border: 2px solid var(--mc-teal-500);
-        animation: ringExpand 1.6s ease-out 0.5s infinite;
-    }
-
-    @keyframes successPop {
-        from { opacity: 0; transform: scale(0.5); }
-        to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes checkPop {
-        from { opacity: 0; transform: scale(0.5); }
-        to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes ringExpand {
-        0%   { opacity: 0.7; transform: scale(1); }
-        100% { opacity: 0;   transform: scale(1.4); }
-    }
-
-    .success-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 0.5rem;
-        animation: fieldRise 0.5s ease-out 0.4s both;
-    }
-
-    .success-text {
-        color: #64748b;
-        font-size: 0.95rem;
-        margin-bottom: 2rem;
-        animation: fieldRise 0.5s ease-out 0.5s both;
-    }
-
-    .redirect-note {
-        color: #94a3b8;
-        font-size: 0.8rem;
-        margin-top: 1rem;
-        animation: fieldRise 0.5s ease-out 0.7s both;
-    }
-
-    /* Countdown bar */
-    .countdown-bar {
-        width: 100%;
-        height: 3px;
-        background: #e2e8f0;
-        border-radius: 3px;
-        overflow: hidden;
-        margin-top: 1rem;
-    }
-    .countdown-bar::after {
-        content: '';
-        display: block;
-        height: 100%;
-        background: var(--mc-teal-500);
-        animation: countdown 3.5s linear forwards;
-    }
-    @keyframes countdown {
-        from { width: 0%; }
-        to   { width: 100%; }
-    }
-
-    /* ---------- Responsive ---------- */
-    @media (max-width: 991.98px) {
-        .brand-panel {
-            padding: 2rem;
-            text-align: center;
-        }
-        .brand-features {
-            text-align: left;
-            display: inline-block;
-        }
-        .form-panel { padding: 2.5rem 1.5rem; }
-        .reg-shell { border-radius: 20px; }
-    }
+    @keyframes pop { from { opacity:0; transform: scale(.5); } }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Floating decorative orbs -->
-<div class="orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-</div>
+<div class="container">
+    <div class="card-shell">
+        {% if account_created %}
+            <!-- Success -->
+            <div class="text-center">
+                <div class="success-icon"><i class="fa-solid fa-check fa-2x"></i></div>
+                <h2>Patient Account Created</h2>
+                <p class="sub">The new patient is now registered and ready to use.</p>
+                <a href="{{ redirect_url }}" class="btn-teal d-inline-flex align-items-center gap-2">
+                    Proceed to Dashboard <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <p class="small text-muted mt-3 mb-0">Redirecting automatically…</p>
+            </div>
+        {% else %}
+            <!-- Form -->
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2>Create Patient Account</h2>
+                    <p class="sub mb-0">Provision and link a validated new patient profile.</p>
+                </div>
+                <a href="{% url 'accounts:admin_dashboard' %}" class="btn-ghost btn-sm py-1 px-3">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
 
-<div class="reg-wrapper">
-    <!-- Breadcrumb -->
-    <div class="crumb">
-        <a href="{% url 'accounts:admin_dashboard' %}">
-            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-        </a>
-    </div>
+            <form method="post" autocomplete="off">
+                {% csrf_token %}
 
-    <div class="reg-shell">
-        <div class="row g-0">
+                {% if form.errors %}
+                    <div class="alert-error">Please correct the highlighted fields below.</div>
+                {% endif %}
 
-            <!-- LEFT: Brand panel -->
-            <div class="col-lg-5">
-                <div class="brand-panel">
-                    <div class="brand-content">
-                        <div class="brand-icon">
-                            {% if account_created %}
-                                <i class="fa-solid fa-circle-check"></i>
-                            {% else %}
-                                <i class="fa-solid fa-user-plus"></i>
-                            {% endif %}
-                        </div>
-                        <h1 class="brand-title">
-                            {% if account_created %}
-                                Account Created
-                            {% else %}
-                                Add a Patient
-                            {% endif %}
-                        </h1>
-                        <p class="brand-subtitle">
-                            {% if account_created %}
-                                The new patient profile is now registered in the system and ready for use.
-                            {% else %}
-                                Provision a validated patient account and link it to their primary medical facility.
-                            {% endif %}
-                        </p>
-                        <ul class="brand-features">
-                            <li><i class="fa-solid fa-user-shield"></i> Validated identity fields</li>
-                            <li><i class="fa-solid fa-link"></i> Linked to assigned hospital</li>
-                            <li><i class="fa-solid fa-lock"></i> Encrypted credentials</li>
-                        </ul>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label>First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<div class="text-danger small mt-1">{{ form.first_name.errors|join:", " }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<div class="text-danger small mt-1">{{ form.last_name.errors|join:", " }}</div>{% endif %}
                     </div>
                 </div>
-            </div>
 
-            <!-- RIGHT: Form or success state -->
-            <div class="col-lg-7">
-                <div class="form-panel">
-
-                    {% if account_created %}
-                        <!-- ==================== SUCCESS STATE ==================== -->
-                        <div class="text-center">
-                            <div class="success-icon">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <h2 class="success-title">Patient Account Created</h2>
-                            <p class="success-text">
-                                The new patient account has been registered successfully and is ready to use.
-                            </p>
-
-                            <a href="{{ redirect_url }}" class="btn-teal">
-                                <span>Proceed to Dashboard</span>
-                                <i class="fa-solid fa-arrow-right small"></i>
-                            </a>
-
-                            <div class="redirect-note">
-                                Redirecting automatically in a moment…
-                            </div>
-                            <div class="countdown-bar mx-auto" style="max-width: 220px;"></div>
-                        </div>
-
-                    {% else %}
-                        <!-- ==================== FORM STATE ==================== -->
-                        <h2 class="form-heading">Create Patient Account</h2>
-                        <p class="form-subheading">Provision and link a validated new patient profile.</p>
-
-                        <form method="post" autocomplete="off">
-                            {% csrf_token %}
-
-                            {% if form.errors %}
-                                <div class="alert-error" role="alert">
-                                    <i class="fa-solid fa-circle-exclamation mt-1"></i>
-                                    <div>
-                                        <strong class="d-block mb-1">Please check your details</strong>
-                                        Some fields need your attention before we can create this account.
-                                    </div>
-                                </div>
-                            {% endif %}
-
-                            <!-- Names -->
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="field-group">
-                                        <label for="{{ form.first_name.id_for_label }}" class="field-label">First Name</label>
-                                        {{ form.first_name }}
-                                        {% if form.first_name.errors %}
-                                            <div class="text-danger small mt-1">{{ form.first_name.errors|join:", " }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field-group">
-                                        <label for="{{ form.last_name.id_for_label }}" class="field-label">Last Name</label>
-                                        {{ form.last_name }}
-                                        {% if form.last_name.errors %}
-                                            <div class="text-danger small mt-1">{{ form.last_name.errors|join:", " }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Email + Hospital -->
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="field-group">
-                                        <label for="{{ form.email.id_for_label }}" class="field-label">Email Address</label>
-                                        {{ form.email }}
-                                        {% if form.email.errors %}
-                                            <div class="text-danger small mt-1">{{ form.email.errors|join:", " }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field-group">
-                                        <label for="{{ form.hospital.id_for_label }}" class="field-label">Assigned Hospital</label>
-                                        {{ form.hospital }}
-                                        {% if form.hospital.errors %}
-                                            <div class="text-danger small mt-1">{{ form.hospital.errors|join:", " }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Passwords -->
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="field-group">
-                                        <label for="{{ form.password1.id_for_label }}" class="field-label">Password</label>
-                                        {{ form.password1 }}
-                                        {% if form.password1.errors %}
-                                            <div class="text-danger small mt-1">{{ form.password1.errors|join:", " }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field-group">
-                                        <label for="{{ form.password2.id_for_label }}" class="field-label">Confirm Password</label>
-                                        {{ form.password2 }}
-                                        {% if form.password2.errors %}
-                                            <div class="text-danger small mt-1">{{ form.password2.errors|join:", " }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="field-group d-flex flex-column flex-sm-row gap-2 justify-content-end mt-4">
-                                <a href="{% url 'accounts:admin_dashboard' %}" class="btn-cancel order-2 order-sm-1">
-                                    Cancel
-                                </a>
-                                <button type="submit" class="btn-teal order-1 order-sm-2">
-                                    <i class="fa-solid fa-user-plus small"></i>
-                                    <span>Create Patient</span>
-                                </button>
-                            </div>
-                        </form>
-                    {% endif %}
-
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors|join:", " }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Assigned Hospital</label>
+                        {{ form.hospital }}
+                        {% if form.hospital.errors %}<div class="text-danger small mt-1">{{ form.hospital.errors|join:", " }}</div>{% endif %}
+                    </div>
                 </div>
-            </div>
 
-        </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label>Password</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}<div class="text-danger small mt-1">{{ form.password1.errors|join:", " }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label>Confirm Password</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}<div class="text-danger small mt-1">{{ form.password2.errors|join:", " }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'accounts:admin_dashboard' %}" class="btn-ghost">Cancel</a>
+                    <button type="submit" class="btn-teal d-inline-flex align-items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> Create Patient
+                    </button>
+                </div>
+            </form>
+        {% endif %}
     </div>
 </div>
 
 {% if account_created %}
-<!-- Auto-redirect fallback -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        window.location.href = "{{ redirect_url }}";
-    }, 3500);
-});
+setTimeout(() => window.location.href = "{{ redirect_url }}", 3500);
 </script>
 {% endif %}
 {% endblock %}
