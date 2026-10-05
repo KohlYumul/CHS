@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}Patient Registration - MedCentral{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* ---------- Card styling ---------- */
+    /* Premium Registration Form Card Styling */
     .form-card {
         border: none;
         border-radius: 16px;
         background-color: #ffffff;
     }
 
+    /* Safely target Django's standard generated form inputs for global consistency */
     .form-card input[type="text"],
     .form-card input[type="email"],
     .form-card input[type="password"],
@@ -44,164 +44,90 @@
         margin-bottom: 0.4rem;
         font-size: 0.9rem;
     }
-
-    /* ---------- Illustration panel ---------- */
-    .illustration-panel {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        border-radius: 16px;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    .illustration-panel img {
-        max-width: 100%;
-        max-height: 400px;
-        width: auto;
-        height: auto;
-        animation: floaty 6s ease-in-out infinite;
-        filter: drop-shadow(0 12px 24px rgba(13, 110, 253, 0.12));
-    }
-
-    @keyframes floaty {
-        0%, 100% { transform: translateY(0); }
-        50%      { transform: translateY(-12px); }
-    }
-
-    /* ---------- Entrance animations ---------- */
-    .animate-in {
-        opacity: 0;
-        transform: translateY(16px);
-        animation: fadeSlideIn 0.6s ease-out forwards;
-    }
-
-    @keyframes fadeSlideIn {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .illustration-panel.animate-in { animation-delay: 0.05s; }
-    .form-col.animate-in           { animation-delay: 0.15s; }
-
-    /* ---------- Register button hover ---------- */
-    .btn-register {
-        transition: transform .15s ease, box-shadow .15s ease;
-    }
-    .btn-register:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.28);
-    }
-
-    /* ---------- Hide illustration on mobile ---------- */
-    @media (max-width: 991.98px) {
-        .illustration-panel {
-            display: none;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="row justify-content-center py-4">
+    <div class="col-md-10 col-lg-8">
 
-    <div class="row g-4 justify-content-center align-items-stretch">
+        <div class="card shadow-sm form-card overflow-hidden">
+            <div class="bg-primary" style="height: 4px;"></div>
 
-        <!-- Left column: illustration -->
-        <div class="col-lg-5 d-none d-lg-flex">
-            <div class="illustration-panel animate-in w-100">
-                <img src="{% static 'img/patient-register.svg' %}" alt="Patient registration illustration">
-            </div>
-        </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="mb-4 border-bottom pb-3 text-center text-sm-start">
+                    <h2 class="h4 fw-bold text-dark mb-1">Patient Registration</h2>
+                    <p class="text-muted small mb-0">Create a secure profile linked with your primary medical facility.</p>
+                </div>
 
-        <!-- Right column: form card -->
-        <div class="col-md-11 col-lg-7 form-col animate-in">
-            <div class="card shadow-sm form-card overflow-hidden h-100">
-                <div class="bg-primary" style="height: 4px;"></div>
+                <form method="post" autocomplete="off">
+                    {% csrf_token %}
 
-                <div class="card-body p-4 p-md-5">
-                    <div class="mb-4 border-bottom pb-3">
-                        <h2 class="h4 fw-bold text-dark mb-1">Patient Registration</h2>
-                        <p class="text-muted small mb-0">Create a secure profile linked with your primary medical facility.</p>
+                    {% if form.errors %}
+                        <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
+                            <i class="fa-solid fa-circle-exclamation fs-5 me-2 flex-shrink-0"></i>
+                            <div>Please correct the highlighted data errors below before saving your registration.</div>
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label form-label-custom">First Name</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.first_name.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label form-label-custom">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.last_name.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <form method="post" autocomplete="off">
-                        {% csrf_token %}
-
-                        {% if form.errors %}
-                            <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center mb-4" role="alert">
-                                <i class="fa-solid fa-circle-exclamation fs-5 me-2 flex-shrink-0"></i>
-                                <div>Please correct the highlighted data errors below before saving your registration.</div>
-                            </div>
-                        {% endif %}
-
-                        <!-- Names -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label for="{{ form.first_name.id_for_label }}" class="form-label form-label-custom">First Name</label>
-                                {{ form.first_name }}
-                                {% if form.first_name.errors %}
-                                    <div class="text-danger small mt-1">{{ form.first_name.errors|join:", " }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.last_name.id_for_label }}" class="form-label form-label-custom">Last Name</label>
-                                {{ form.last_name }}
-                                {% if form.last_name.errors %}
-                                    <div class="text-danger small mt-1">{{ form.last_name.errors|join:", " }}</div>
-                                {% endif %}
-                            </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.email.id_for_label }}" class="form-label form-label-custom">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors|join:", " }}</div>
+                            {% endif %}
                         </div>
-
-                        <!-- Email + Hospital -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label for="{{ form.email.id_for_label }}" class="form-label form-label-custom">Email Address</label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="text-danger small mt-1">{{ form.email.errors|join:", " }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.hospital.id_for_label }}" class="form-label form-label-custom">Primary Medical Center</label>
-                                {{ form.hospital }}
-                                {% if form.hospital.errors %}
-                                    <div class="text-danger small mt-1">{{ form.hospital.errors|join:", " }}</div>
-                                {% endif %}
-                            </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.hospital.id_for_label }}" class="form-label form-label-custom">Primary Medical Center</label>
+                            {{ form.hospital }}
+                            {% if form.hospital.errors %}
+                                <div class="text-danger small mt-1">{{ form.hospital.errors|join:", " }}</div>
+                            {% endif %}
                         </div>
+                    </div>
 
-                        <!-- Passwords -->
-                        <div class="row g-3 mb-5">
-                            <div class="col-md-6">
-                                <label for="{{ form.password1.id_for_label }}" class="form-label form-label-custom">Create Password</label>
-                                {{ form.password1 }}
-                                {% if form.password1.errors %}
-                                    <div class="text-danger small mt-1">{{ form.password1.errors|join:", " }}</div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.password2.id_for_label }}" class="form-label form-label-custom">Confirm Password</label>
-                                {{ form.password2 }}
-                                {% if form.password2.errors %}
-                                    <div class="text-danger small mt-1">{{ form.password2.errors|join:", " }}</div>
-                                {% endif %}
-                            </div>
+                    <div class="row g-3 mb-5">
+                        <div class="col-md-6">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label form-label-custom">Create Password</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">{{ form.password1.errors|join:", " }}</div>
+                            {% endif %}
                         </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label form-label-custom">Confirm Password</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">{{ form.password2.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
 
-                        <!-- Submit -->
-                        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end align-items-center border-top pt-4">
-                            <button type="submit" class="btn btn-primary btn-register px-5 py-2.5 w-100 w-sm-auto fw-medium d-flex align-items-center justify-content-center gap-2 rounded-3 shadow-sm">
-                                <i class="fa-solid fa-user-plus small"></i>
-                                <span>Register Account</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end align-items-center border-top pt-4">
+                        <button type="submit" class="btn btn-primary px-5 py-2.5 w-100 w-sm-auto fw-medium d-flex align-items-center justify-content-center gap-2 rounded-3 shadow-sm">
+                            <i class="fa-solid fa-user-plus small"></i>
+                            <span>Register Account</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
