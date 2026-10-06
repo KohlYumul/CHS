@@ -29,11 +29,11 @@
             transition: color 0.2s ease-in-out;
         }
         .nav-link:hover {
-            color: #0d6efd !important;
+            color: #5eead4 !important;
         }
         .footer {
             background-color: #ffffff;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid #14b8a6;
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -41,11 +41,11 @@
 <body class="d-flex flex-column h-100">
 
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3" style="background: linear-gradient(35deg, #14b8a6 0%, #0d9488 100%);">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="/">
-                    <i class="fa-solid fa-square-h text-primary fs-3 me-2"></i>
-                    <span>Centrailized Hospital System</span>
+                    <i class="fa-solid fa-square-h text-white fs-3 me-2"></i>
+                    <span>Centralized Hospital System</span>
                 </a>
 
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@
                         {% if user.is_authenticated %}
                             <li class="nav-item">
                                 {% if user.role == "Admin" %}
-                                    <a href="{% url 'accounts:admin_dashboard' %}" class="nav-link text-white-50">
+                                    <a href="{% url 'accounts:admin_dashboard' %}" class="nav-link text-white px-3 py-2 rounded-pill" style="background: rgba(255,255,255,0.15);">
                                         <i class="fa-solid fa-chart-line me-1"></i> Dashboard
                                     </a>
                                 {% elif user.role == "Staff" %}
@@ -72,12 +72,12 @@
                             </li>
 
                             <li class="nav-item ms-lg-3">
-                                <span class="badge bg-secondary px-3 py-2 me-2">
+                                <span class="badge px-3 py-2 me-2" style="background-color: rgba(255, 255, 255, 0.2); color: #ffffff;">
                                     <i class="fa-regular fa-user me-1"></i> {{ user.get_full_name|default:user.email }} ({{ user.role }})
                                 </span>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger btn-sm px-3">
+                                <a href="{% url 'accounts:logout' %}" class="btn btn-sm px-3 py-2 rounded-pill" style="background-color: rgba(220, 53, 69, 0.85); border: 1px solid rgba(225, 225, 225, 0.2);">
                                     <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
                                 </a>
                             </li>
