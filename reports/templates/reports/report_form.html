@@ -89,7 +89,7 @@
                         <h2 class="h4 fw-bold text-dark mb-0">
                             {% if form.instance.pk %}Edit Clinical Report{% else %}Create New Report{% endif %}
                         </h2>
-                        <p class="text-muted small mb-0">Please fill out the details below securely archived into records.</p>
+                        <p class="text-muted small mb-0">Please fill out the details below archived into records.</p>
                     </div>
                 </div>
 
@@ -135,7 +135,7 @@
                         <div class="position-relative">
                             {{ form.file }}
                         </div>
-                        <div class="form-text text-muted small mt-1">Accepted formats: Secure PDFs, images, or compressed medical telemetry archives.</div>
+                        <div class="form-text text-muted small mt-1">Accepted formats: PDFs, images, or compressed medical telemetry archives.</div>
                         {% if form.file.errors %}
                             <div class="text-danger small mt-1">{{ form.file.errors|join:", " }}</div>
                         {% endif %}

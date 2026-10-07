@@ -10,7 +10,7 @@ from reports.models import Report
 
 def serve_protected_media(request, file_path):
     """
-    Securely serve uploaded media files with strict role-based access control:
+    Serve uploaded media files with strict role-based access control:
     - Anonymous users: 403 Forbidden
     - Patients: Can only access their own medical records
     - Staff: Can only access medical records and reports from their own hospital
@@ -85,7 +85,7 @@ def serve_protected_media(request, file_path):
         # Any other files require Admin privileges
         return HttpResponseForbidden("Access denied.")
 
-    # 3. Stream file response securely
+
     content_type, _ = mimetypes.guess_type(str(target_path))
     content_type = content_type or 'application/octet-stream'
     return FileResponse(open(target_path, 'rb'), content_type=content_type)
