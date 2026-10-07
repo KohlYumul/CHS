@@ -4,21 +4,52 @@
 
 {% block extra_css %}
 <style>
+    body {
+        background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+        min-height: 100vh;
+    }
+    .dashboard-page {
+        animation: rise 0.5s ease-out;
+    }
+    @keyframes rise {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .dashboard-heading {
+        margin-right: 0;
+        margin-left: 0;
+        padding: 1.5rem;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(15, 118, 110, 0.16);
+    }
+    .dashboard-heading .dashboard-heading-icon {
+        border-radius: 12px !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: #fff !important;
+    }
+    .dashboard-heading .dashboard-eyebrow,
+    .dashboard-heading .dashboard-hospital {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+    .dashboard-heading h1 { color: #fff; }
     /* Dashboard-specific interactive cards */
-    .dashboard-card {
-        border: none;
+    .dashboard-page .dashboard-card {
+        border: 1px solid #d8efeb;
+        border-left: 4px solid #14b8a6 !important;
         border-radius: 12px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         background-color: #ffffff;
         text-decoration: none;
         color: inherit;
     }
-    .dashboard-card:hover {
+    .dashboard-page .dashboard-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 10px 24px rgba(15, 118, 110, 0.12) !important;
     }
     .dashboard-card:hover h4 {
-        color: #0d6efd;
+        color: #0d9488;
     }
     .section-title {
         font-size: 1.1rem;
@@ -28,19 +59,20 @@
 {% endblock %}
 
 {% block content %}
+<div class="dashboard-page">
 <!-- Page Header -->
-<div class="row align-items-center mb-5">
+<div class="row g-0 align-items-center mb-5 dashboard-heading">
     <div class="col-auto">
-        <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+        <div class="dashboard-heading-icon p-3 me-3">
             <i class="fa-solid fa-user-doctor fs-3"></i>
         </div>
     </div>
     <div class="col">
-        <span class="text-uppercase text-muted tracking-wider small fw-bold">Hospital Operations</span>
+        <span class="dashboard-eyebrow text-uppercase tracking-wider small fw-bold">Hospital Operations</span>
         <h1 class="h2 mb-0 fw-bold">
             Staff Dashboard
             {% if hospital %}
-                <span class="text-secondary fw-normal fs-4">| {{ hospital.name }}</span>
+                <span class="dashboard-hospital fw-normal fs-4">| {{ hospital.name }}</span>
             {% endif %}
         </h1>
     </div>
@@ -139,5 +171,6 @@
             </a>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
