@@ -24,4 +24,7 @@ urlpatterns = [
     path('dashboard/staff/', views.staff_dashboard, name='staff_dashboard'),
     path('dashboard/patient/', views.patient_dashboard, name='patient_dashboard'),
     # accounts/urls.py
+
+    # Password reset
+    path("forgot-password/", views.forgot_password, name="forgot_password"),
 ]

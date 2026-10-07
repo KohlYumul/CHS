@@ -9,6 +9,8 @@ from .decorators import role_required
 from django.contrib import messages
 from hospitals.models import Hospital
 from django.urls import reverse
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 User = get_user_model()
@@ -162,3 +164,23 @@ def staff_dashboard(request):
 def patient_dashboard(request):
     hospital = request.user.hospital  # full hospital object
     return render(request, 'dashboard/dashboard_patient.html', {'hospital': hospital})
+
+#Forgot Password
+def forgot_password(request):
+    message = ""
+    error = ""
+
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip()
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            error = "Please enter a valid email address, like yourname@gmail.com."
+        else:
+            message = "If an account exists on this email, an email with directions on how to reset your password will be sent."
+
+    return render(request, "accounts/forgot_password.html", {
+        "message": message,
+        "error": error,
+    })
